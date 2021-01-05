@@ -83,6 +83,18 @@ func TestMedicalRecordCreator_Create(t *testing.T) {
 		assert.NotNil(t, err)
 		assert.Equal(t, entity.ErrInvalidMedicalRecordAttribute, err)
 	})
+
+	t.Run("medical record inserter fails", func(t *testing.T) {
+		exec := createMedicalRecordCreatorExecutor(ctrl)
+		record := createValidMedicalRecord()
+
+		exec.inserter.EXPECT().Insert(context.Background(), record).Return(entity.ErrInternalServer)
+
+		err := exec.usecase.Create(context.Background(), record)
+
+		assert.NotNil(t, err)
+		assert.Equal(t, entity.ErrInternalServer, err)
+	})
 }
 
 func createValidMedicalRecord() *entity.MedicalRecord {
