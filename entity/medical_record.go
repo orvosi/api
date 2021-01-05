@@ -13,7 +13,8 @@ type MedicalRecord struct {
 
 // User holds user's information.
 type User struct {
-	ID    hashids.ID `json:"id"`
-	Email string     `json:"email"`
-	Name  string     `json:"name"`
+	ID       hashids.ID `json:"id"`
+	Email    string     `json:"email"`
+	Name     string     `json:"name"`
+	GoogleID string     `json:"google_id"`
 }
