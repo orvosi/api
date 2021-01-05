@@ -3,7 +3,7 @@ BEGIN;
 CREATE TABLE IF NOT EXISTS users (
    id          BIGSERIAL      PRIMARY KEY,
    "name"      TEXT           NOT NULL,
-   email       TEXT           NOT NULL,
+   email       TEXT           UNIQUE NOT NULL,
    google_id   TEXT           UNIQUE NOT NULL,
    created_at  TIMESTAMP,
    updated_at  TIMESTAMP,
