@@ -9,6 +9,9 @@
 # Test binary, built with `go test -c`
 *.test
 
+# HTML page
+*.html
+
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
