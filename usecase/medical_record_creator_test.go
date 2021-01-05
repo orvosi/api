@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/indrasaputra/hashids"
 	"github.com/orvosi/api/entity"
 	mock_usecase "github.com/orvosi/api/test/mock/usecase"
 	"github.com/orvosi/api/usecase"
@@ -38,6 +39,33 @@ func TestMedicalRecordCreator_Create(t *testing.T) {
 		assert.NotNil(t, err)
 		assert.Equal(t, entity.ErrEmptyMedicalRecord, err)
 	})
+
+	t.Run("medical record's symptom is empty", func(t *testing.T) {
+		exec := createMedicalRecordCreatorExecutor(ctrl)
+		record := createValidMedicalRecord()
+		record.Symptom = "   "
+
+		err := exec.usecase.Create(context.Background(), record)
+
+		assert.NotNil(t, err)
+		assert.Equal(t, entity.ErrInvalidMedicalRecordAttribute, err)
+	})
+}
+
+func createValidMedicalRecord() *entity.MedicalRecord {
+	return &entity.MedicalRecord{
+		ID:        hashids.ID(1),
+		Symptom:   "symptom",
+		Diagnosis: "diagnosis",
+		Therapy:   "therapy",
+		Result:    "result",
+		User: &entity.User{
+			ID:       hashids.ID(1),
+			Email:    "email@provider.com",
+			Name:     "User 1",
+			GoogleID: "super-long-google-id",
+		},
+	}
 }
 
 func createMedicalRecordCreatorExecutor(ctrl *gomock.Controller) *MedicalRecordCreator_Executor {
