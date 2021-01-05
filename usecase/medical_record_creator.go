@@ -64,5 +64,6 @@ func sanitizeMedicalRecord(record *entity.MedicalRecord) {
 func isMedicalRecordAttributesValid(record *entity.MedicalRecord) bool {
 	return record.Symptom != "" &&
 		record.Diagnosis != "" &&
-		record.Therapy != ""
+		record.Therapy != "" &&
+		record.User != nil
 }
