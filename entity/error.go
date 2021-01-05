@@ -2,6 +2,11 @@ package entity
 
 import "fmt"
 
+var (
+	// ErrEmptyMedicalRecord indicates that a medical record is empty or null.
+	ErrEmptyMedicalRecord = NewError("03-001", "MedicalRecord is empty")
+)
+
 // Error represents a data structure for error.
 type Error struct {
 	// Code represents error code.
