@@ -18,3 +18,19 @@ cover:
 coverhtml:
 	go test -v -race ./... -coverprofile=coverage.out
 	go tool cover -html=coverage.out
+
+migration:
+	# https://github.com/golang-migrate/migrate
+	migrate create -ext sql -dir db/migrations -seq $(name)
+
+migrate:
+	# https://github.com/golang-migrate/migrate
+	migrate -path db/migrations -database $(url) up
+
+rollback:
+	# https://github.com/golang-migrate/migrate
+	migrate -path db/migrations -database $(url) down 1
+
+force-migrate:
+	# https://github.com/golang-migrate/migrate
+	migrate -path db/migrations -database $(url) force $(version)
