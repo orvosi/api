@@ -27,6 +27,13 @@ type MedicalRecordCreator struct {
 	inserter MedicalRecordInserter
 }
 
+// NewMedicalRecordCreator creates an instance of MedicalRecordCreator.
+func NewMedicalRecordCreator(inserter MedicalRecordInserter) *MedicalRecordCreator {
+	return &MedicalRecordCreator{
+		inserter: inserter,
+	}
+}
+
 // Create creates a new medical record and persist it into a storage.s
 func (mrc *MedicalRecordCreator) Create(ctx context.Context, record *entity.MedicalRecord) *entity.Error {
 	if err := validateMedicalRecord(record); err != nil {
