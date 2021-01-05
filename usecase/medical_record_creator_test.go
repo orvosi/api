@@ -50,6 +50,17 @@ func TestMedicalRecordCreator_Create(t *testing.T) {
 		assert.NotNil(t, err)
 		assert.Equal(t, entity.ErrInvalidMedicalRecordAttribute, err)
 	})
+
+	t.Run("medical record's diagnosis is empty", func(t *testing.T) {
+		exec := createMedicalRecordCreatorExecutor(ctrl)
+		record := createValidMedicalRecord()
+		record.Diagnosis = "   "
+
+		err := exec.usecase.Create(context.Background(), record)
+
+		assert.NotNil(t, err)
+		assert.Equal(t, entity.ErrInvalidMedicalRecordAttribute, err)
+	})
 }
 
 func createValidMedicalRecord() *entity.MedicalRecord {
