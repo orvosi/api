@@ -4,7 +4,9 @@ import "fmt"
 
 var (
 	// ErrEmptyMedicalRecord indicates that a medical record is empty or null.
-	ErrEmptyMedicalRecord = NewError("03-001", "MedicalRecord is empty")
+	ErrEmptyMedicalRecord = NewError("01-001", "MedicalRecord is empty")
+	// ErrInvalidMedicalRecordAttribute indicates that a medical record is empty or null.
+	ErrInvalidMedicalRecordAttribute = NewError("01-002", "Medical record's attributes are invalid. Please, check all attributes")
 )
 
 // Error represents a data structure for error.
