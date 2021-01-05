@@ -3,10 +3,13 @@ package entity
 import "fmt"
 
 var (
+	// ErrInternalServer indicates there is unexpected problem occurs in the system itself.
+	// The detail of the error/problem should be known in internal message.
+	ErrInternalServer = NewError("01-001", "Internal server error")
 	// ErrEmptyMedicalRecord indicates that a medical record is empty or null.
-	ErrEmptyMedicalRecord = NewError("01-001", "MedicalRecord is empty")
+	ErrEmptyMedicalRecord = NewError("01-002", "MedicalRecord is empty")
 	// ErrInvalidMedicalRecordAttribute indicates that a medical record is empty or null.
-	ErrInvalidMedicalRecordAttribute = NewError("01-002", "Medical record's attributes are invalid. Please, check all attributes")
+	ErrInvalidMedicalRecordAttribute = NewError("01-003", "Medical record's attributes are invalid. Please, check all attributes")
 )
 
 // Error represents a data structure for error.
