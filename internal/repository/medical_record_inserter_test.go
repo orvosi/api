@@ -2,11 +2,13 @@ package repository_test
 
 import (
 	"context"
+	"errors"
 	"log"
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/golang/mock/gomock"
+	"github.com/indrasaputra/hashids"
 	"github.com/orvosi/api/entity"
 	"github.com/orvosi/api/internal/repository"
 	"github.com/stretchr/testify/assert"
@@ -39,6 +41,35 @@ func TestMedicalRecordInserter_Insert(t *testing.T) {
 		assert.NotNil(t, err)
 		assert.Equal(t, entity.ErrEmptyMedicalRecord, err)
 	})
+
+	t.Run("query doesn't return inserted id", func(t *testing.T) {
+		exec := createMedicalRecordInserterExecutor(ctrl)
+		record := createValidMedicalRecord()
+
+		exec.sql.ExpectQuery(`INSERT INTO medical_records \(user_id, symptom, diagnosis, therapy, created_at, updated_at, created_by, updated_by\)`).
+			WillReturnError(errors.New("fail to insert to database"))
+
+		err := exec.repo.Insert(context.Background(), record)
+
+		assert.NotNil(t, err)
+		assert.Equal(t, entity.ErrInternalServer, err)
+	})
+}
+
+func createValidMedicalRecord() *entity.MedicalRecord {
+	return &entity.MedicalRecord{
+		ID:        hashids.ID(1),
+		Symptom:   "symptom",
+		Diagnosis: "diagnosis",
+		Therapy:   "therapy",
+		Result:    "result",
+		User: &entity.User{
+			ID:       hashids.ID(1),
+			Email:    "email@provider.com",
+			Name:     "User 1",
+			GoogleID: "super-long-google-id",
+		},
+	}
 }
 
 func createMedicalRecordInserterExecutor(ctrl *gomock.Controller) *MedicalRecordInserter_Executor {
