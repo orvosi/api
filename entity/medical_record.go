@@ -5,6 +5,7 @@ import "github.com/indrasaputra/hashids"
 // MedicalRecord holds the user's medical record data
 type MedicalRecord struct {
 	ID        hashids.ID `json:"id"`
+	User      *User      `json:"user"`
 	Symptom   string     `json:"symptom"`
 	Diagnosis string     `json:"diagnosis"`
 	Therapy   string     `json:"therapy"`
