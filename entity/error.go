@@ -18,14 +18,15 @@ type Error struct {
 // NewError creates an instance of Error.
 func NewError(code, message string) *Error {
 	return &Error{
-		Code:    code,
-		Message: message,
+		Code:            code,
+		Message:         message,
+		internalMessage: message,
 	}
 }
 
-// Error returns concatenation of public message and internal message in one string.
+// Error returns internal message in one string.
 func (err *Error) Error() string {
-	return fmt.Sprintf("%s. %s", err.Message, err.internalMessage)
+	return err.internalMessage
 }
 
 // WrapError wraps Error with given message.
