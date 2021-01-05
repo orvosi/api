@@ -54,6 +54,22 @@ func TestMedicalRecordInserter_Insert(t *testing.T) {
 		assert.NotNil(t, err)
 		assert.Equal(t, entity.ErrInternalServer, err)
 	})
+
+	t.Run("successfully insert a new medical record", func(t *testing.T) {
+		exec := createMedicalRecordInserterExecutor(ctrl)
+		record := createValidMedicalRecord()
+
+		exec.sql.ExpectQuery(`INSERT INTO medical_records \(user_id, symptom, diagnosis, therapy, created_at, updated_at, created_by, updated_by\)`).
+			WillReturnRows(sqlmock.
+				NewRows([]string{"id"}).
+				AddRow(999),
+			)
+
+		err := exec.repo.Insert(context.Background(), record)
+
+		assert.Nil(t, err)
+		assert.Equal(t, hashids.ID(999), record.ID)
+	})
 }
 
 func createValidMedicalRecord() *entity.MedicalRecord {
