@@ -32,6 +32,9 @@ func validateMedicalRecord(record *entity.MedicalRecord) *entity.Error {
 	}
 
 	sanitizeMedicalRecord(record)
+	if !isMedicalRecordAttributesValid(record) {
+		return entity.ErrInvalidMedicalRecordAttribute
+	}
 	return nil
 }
 
@@ -39,4 +42,10 @@ func sanitizeMedicalRecord(record *entity.MedicalRecord) {
 	record.Symptom = strings.TrimSpace(record.Symptom)
 	record.Diagnosis = strings.TrimSpace(record.Diagnosis)
 	record.Therapy = strings.TrimSpace(record.Therapy)
+}
+
+func isMedicalRecordAttributesValid(record *entity.MedicalRecord) bool {
+	return record.Symptom != "" &&
+		record.Diagnosis != "" &&
+		record.Therapy != ""
 }
