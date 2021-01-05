@@ -10,3 +10,10 @@ type MedicalRecord struct {
 	Therapy   string     `json:"therapy"`
 	Result    string     `json:"result"`
 }
+
+// User holds user's information.
+type User struct {
+	ID    hashids.ID `json:"id"`
+	Email string     `json:"email"`
+	Name  string     `json:"name"`
+}
