@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"strings"
 
 	"github.com/orvosi/api/entity"
 )
@@ -29,5 +30,13 @@ func validateMedicalRecord(record *entity.MedicalRecord) *entity.Error {
 	if record == nil {
 		return entity.ErrEmptyMedicalRecord
 	}
+
+	sanitizeMedicalRecord(record)
 	return nil
+}
+
+func sanitizeMedicalRecord(record *entity.MedicalRecord) {
+	record.Symptom = strings.TrimSpace(record.Symptom)
+	record.Diagnosis = strings.TrimSpace(record.Diagnosis)
+	record.Therapy = strings.TrimSpace(record.Therapy)
 }
