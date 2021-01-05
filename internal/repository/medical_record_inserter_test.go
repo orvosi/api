@@ -1,11 +1,13 @@
 package repository_test
 
 import (
+	"context"
 	"log"
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/golang/mock/gomock"
+	"github.com/orvosi/api/entity"
 	"github.com/orvosi/api/internal/repository"
 	"github.com/stretchr/testify/assert"
 )
@@ -22,6 +24,20 @@ func TestNewMedicalRecordInserter(t *testing.T) {
 	t.Run("successfully create an instance of MedicalRecordInserter", func(t *testing.T) {
 		exec := createMedicalRecordInserterExecutor(ctrl)
 		assert.NotNil(t, exec.repo)
+	})
+}
+
+func TestMedicalRecordInserter_Insert(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	t.Run("can't proceed due to nil medical record", func(t *testing.T) {
+		exec := createMedicalRecordInserterExecutor(ctrl)
+
+		err := exec.repo.Insert(context.Background(), nil)
+
+		assert.NotNil(t, err)
+		assert.Equal(t, entity.ErrEmptyMedicalRecord, err)
 	})
 }
 
