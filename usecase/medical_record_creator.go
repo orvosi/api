@@ -10,5 +10,5 @@ import (
 // to create a medical record.
 type CreateMedicalRecord interface {
 	// Create creates a new medical record.
-	Create(ctx context.Context, record *entity.MedicalRecord) error
+	Create(ctx context.Context, record *entity.MedicalRecord) *entity.Error
 }
