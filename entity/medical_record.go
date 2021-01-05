@@ -10,6 +10,7 @@ type MedicalRecord struct {
 	Diagnosis string     `json:"diagnosis"`
 	Therapy   string     `json:"therapy"`
 	Result    string     `json:"result"`
+	Auditable
 }
 
 // User holds user's information.
@@ -18,4 +19,5 @@ type User struct {
 	Email    string     `json:"email"`
 	Name     string     `json:"name"`
 	GoogleID string     `json:"google_id"`
+	Auditable
 }
