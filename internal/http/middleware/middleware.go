@@ -7,7 +7,7 @@ package middleware
 type ContextKey string
 
 const (
-	// UserContextKey is just a string "user" defined as a key
+	// ContextKeyUser is just a string "user" defined as a key
 	// to save a user information in context.
-	UserContextKey = ContextKey("user")
+	ContextKeyUser = ContextKey("user")
 )

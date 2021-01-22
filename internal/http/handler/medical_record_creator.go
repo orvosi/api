@@ -63,7 +63,7 @@ func (mrc *MedicalRecordCreator) Create(ctx echo.Context) error {
 }
 
 func extractUserFromRequestContext(ctx context.Context) (*entity.User, error) {
-	val := ctx.Value(middleware.UserContextKey)
+	val := ctx.Value(middleware.ContextKeyUser)
 	user, ok := val.(*entity.User)
 	if !ok {
 		return nil, entity.ErrInternalServer
