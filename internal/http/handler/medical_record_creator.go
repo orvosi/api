@@ -22,11 +22,11 @@ type MedicalRecordRequest struct {
 // MedicalRecordCreator handles HTTP request and response
 // for create medical record.
 type MedicalRecordCreator struct {
-	creator usecase.MedicalRecordCreator
+	creator usecase.CreateMedicalRecord
 }
 
 // NewMedicalRecordCreator creates an instance of MedicalCreator.
-func NewMedicalRecordCreator(creator usecase.MedicalRecordCreator) *MedicalRecordCreator {
+func NewMedicalRecordCreator(creator usecase.CreateMedicalRecord) *MedicalRecordCreator {
 	return &MedicalRecordCreator{
 		creator: creator,
 	}
