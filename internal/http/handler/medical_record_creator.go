@@ -1,7 +1,11 @@
 package handler
 
 import (
+	"net/http"
+
 	"github.com/labstack/echo/v4"
+	"github.com/orvosi/api/entity"
+	"github.com/orvosi/api/internal/http/response"
 	"github.com/orvosi/api/usecase"
 )
 
@@ -28,5 +32,12 @@ func NewMedicalRecordCreator(creator usecase.MedicalRecordCreator) *MedicalRecor
 
 // Create handles `POST /medical-records` endpoint.
 func (mrc *MedicalRecordCreator) Create(ctx echo.Context) error {
+	var request MedicalRecordRequest
+	if err := ctx.Bind(&request); err != nil {
+		res := response.NewError(entity.ErrInvalidMedicalRecordRequest)
+		ctx.JSON(http.StatusBadRequest, res)
+		return err
+	}
+
 	return nil
 }
