@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"github.com/labstack/echo/v4"
 	"github.com/orvosi/api/usecase"
 )
 
@@ -23,4 +24,9 @@ func NewMedicalRecordCreator(creator usecase.MedicalRecordCreator) *MedicalRecor
 	return &MedicalRecordCreator{
 		creator: creator,
 	}
+}
+
+// Create handles `POST /medical-records` endpoint.
+func (mrc *MedicalRecordCreator) Create(ctx echo.Context) error {
+	return nil
 }
