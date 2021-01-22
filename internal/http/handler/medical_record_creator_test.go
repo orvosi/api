@@ -50,6 +50,32 @@ func TestMedicalRecordCreator_Create(t *testing.T) {
 		str := fmt.Sprintf("%s\n", `{"errors":[{"code":"02-003","message":"Medical record request is invalid. Please, check the JSON request"}],"meta":null}`)
 		assert.Equal(t, str, rec.Body.String())
 	})
+
+	t.Run("can't extract user information from request context", func(t *testing.T) {
+		mr := createValidCreateMedicalRecordRequest()
+		body, _ := json.Marshal(mr)
+		req := httptest.NewRequest(http.MethodPost, "/medical-records", bytes.NewBuffer(body))
+		req.Header.Set("Content-Type", echo.MIMEApplicationJSON)
+
+		rec := httptest.NewRecorder()
+		e := echo.New()
+		ctx := e.NewContext(req, rec)
+
+		exec := createMedicalRecordCreatorExecutor(ctrl)
+		exec.handler.Create(ctx)
+
+		assert.Equal(t, http.StatusInternalServerError, rec.Code)
+		str := fmt.Sprintf("%s\n", `{"errors":[{"code":"01-001","message":"Internal server error"}],"meta":null}`)
+		assert.Equal(t, str, rec.Body.String())
+	})
+}
+
+func createValidCreateMedicalRecordRequest() *handler.MedicalRecordRequest {
+	return &handler.MedicalRecordRequest{
+		Symptom:   "symptom",
+		Diagnosis: "diagnosis",
+		Therapy:   "therapy",
+	}
 }
 
 func createMedicalRecordCreatorExecutor(ctrl *gomock.Controller) *MedicalRecordCreator_Executor {
