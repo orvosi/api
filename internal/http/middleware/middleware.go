@@ -5,3 +5,9 @@ package middleware
 // This is to avoid go-lint warning
 // "should not use basic type untyped string as key in context.WithValue".
 type ContextKey string
+
+const (
+	// UserContextKey is just a string "user" defined as a key
+	// to save a user information in context.
+	UserContextKey = ContextKey("user")
+)
