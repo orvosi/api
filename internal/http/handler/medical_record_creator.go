@@ -16,7 +16,6 @@ type MedicalRecordRequest struct {
 	Symptom   string `json:"symptom"`
 	Diagnosis string `json:"diagnosis"`
 	Therapy   string `json:"therapy"`
-	Result    string `json:"result"`
 }
 
 // MedicalRecordCreator handles HTTP request and response
@@ -78,6 +77,5 @@ func createMedicalRecordFromRequest(req *MedicalRecordRequest, user *entity.User
 		Symptom:   req.Symptom,
 		Diagnosis: req.Diagnosis,
 		Therapy:   req.Therapy,
-		Result:    req.Result,
 	}
 }
