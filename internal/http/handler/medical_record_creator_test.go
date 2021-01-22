@@ -94,6 +94,27 @@ func TestMedicalRecordCreator_Create(t *testing.T) {
 		str := fmt.Sprintf("%s\n", `{"errors":[{"code":"02-002","message":"Medical record's attributes are invalid. Please, check all attributes"}],"meta":null}`)
 		assert.Equal(t, str, rec.Body.String())
 	})
+
+	t.Run("creator service returns 5xx error", func(t *testing.T) {
+		mr := createValidCreateMedicalRecordRequest()
+		body, _ := json.Marshal(mr)
+		req := httptest.NewRequest(http.MethodPost, "/medical-records", bytes.NewBuffer(body))
+		req.Header.Set("Content-Type", echo.MIMEApplicationJSON)
+		user := createUserInformation()
+		req = req.WithContext(context.WithValue(context.Background(), middleware.ContextKeyUser, user))
+
+		rec := httptest.NewRecorder()
+		e := echo.New()
+		ctx := e.NewContext(req, rec)
+
+		exec := createMedicalRecordCreatorExecutor(ctrl)
+		exec.usecase.EXPECT().Create(ctx.Request().Context(), createMedicalRecordFromRequest(mr, user)).Return(entity.ErrInternalServer)
+		exec.handler.Create(ctx)
+
+		assert.Equal(t, http.StatusInternalServerError, rec.Code)
+		str := fmt.Sprintf("%s\n", `{"errors":[{"code":"01-001","message":"Internal server error"}],"meta":null}`)
+		assert.Equal(t, str, rec.Body.String())
+	})
 }
 
 func createValidCreateMedicalRecordRequest() *handler.MedicalRecordRequest {
