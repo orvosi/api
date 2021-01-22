@@ -10,6 +10,8 @@ var (
 	ErrEmptyMedicalRecord = NewError("01-002", "MedicalRecord is empty")
 	// ErrInvalidMedicalRecordAttribute indicates that a medical record is empty or null.
 	ErrInvalidMedicalRecordAttribute = NewError("01-003", "Medical record's attributes are invalid. Please, check all attributes")
+	// ErrInvalidMedicalRecordRequest indicates that a medical record request that is sent over HTTP is invalid.
+	ErrInvalidMedicalRecordRequest = NewError("01-001", "Medical record request is invalid. Please, check the JSON request")
 )
 
 // Error represents a data structure for error.
