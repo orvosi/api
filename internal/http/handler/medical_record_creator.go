@@ -45,10 +45,20 @@ func (mrc *MedicalRecordCreator) Create(ctx echo.Context) error {
 		res := response.NewError(err)
 		ctx.JSON(http.StatusInternalServerError, res)
 		return err
-
 	}
-	createMedicalRecordFromRequest(&request, user)
 
+	record := createMedicalRecordFromRequest(&request, user)
+	if err := mrc.creator.Create(ctx.Request().Context(), record); err != nil {
+		res := response.NewError(err)
+		status := http.StatusInternalServerError
+		if err.Code != entity.ErrInternalServer.Code {
+			status = http.StatusBadRequest
+		}
+		ctx.JSON(status, res)
+		return err
+	}
+
+	ctx.JSON(http.StatusCreated, response.NewSuccess(nil, response.EmptyMeta{}))
 	return nil
 }
 
@@ -61,6 +71,12 @@ func extractUserFromRequestContext(ctx context.Context) (*entity.User, error) {
 	return user, nil
 }
 
-func createMedicalRecordFromRequest(req *MedicalRecordRequest) *entity.MedicalRecord {
-	return nil
+func createMedicalRecordFromRequest(req *MedicalRecordRequest, user *entity.User) *entity.MedicalRecord {
+	return &entity.MedicalRecord{
+		User:      user,
+		Symptom:   req.Symptom,
+		Diagnosis: req.Diagnosis,
+		Therapy:   req.Therapy,
+		Result:    req.Result,
+	}
 }
