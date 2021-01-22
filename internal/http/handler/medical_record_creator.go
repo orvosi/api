@@ -6,6 +6,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/orvosi/api/entity"
+	"github.com/orvosi/api/internal/http/middleware"
 	"github.com/orvosi/api/internal/http/response"
 	"github.com/orvosi/api/usecase"
 )
@@ -63,7 +64,7 @@ func (mrc *MedicalRecordCreator) Create(ctx echo.Context) error {
 }
 
 func extractUserFromRequestContext(ctx context.Context) (*entity.User, error) {
-	val := ctx.Value("user")
+	val := ctx.Value(middleware.UserContextKey)
 	user, ok := val.(*entity.User)
 	if !ok {
 		return nil, entity.ErrInternalServer
