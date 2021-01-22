@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -39,5 +40,27 @@ func (mrc *MedicalRecordCreator) Create(ctx echo.Context) error {
 		return err
 	}
 
+	user, err := extractUserFromRequestContext(ctx.Request().Context())
+	if err != nil {
+		res := response.NewError(err)
+		ctx.JSON(http.StatusInternalServerError, res)
+		return err
+
+	}
+	createMedicalRecordFromRequest(&request, user)
+
+	return nil
+}
+
+func extractUserFromRequestContext(ctx context.Context) (*entity.User, error) {
+	val := ctx.Value("user")
+	user, ok := val.(*entity.User)
+	if !ok {
+		return nil, entity.ErrInternalServer
+	}
+	return user, nil
+}
+
+func createMedicalRecordFromRequest(req *MedicalRecordRequest) *entity.MedicalRecord {
 	return nil
 }
