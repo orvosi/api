@@ -10,7 +10,7 @@ import (
 	"github.com/orvosi/api/usecase"
 )
 
-// BuildMedicalRecordCreator build medical record creation workflow
+// BuildMedicalRecordCreator builds medical record creation workflow
 // starting from handler down to repository.
 func BuildMedicalRecordCreator(cfg *config.Config, db *sql.DB) []*router.Route {
 	ins := repository.NewMedicalRecordInserter(db)
