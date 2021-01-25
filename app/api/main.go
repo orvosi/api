@@ -7,6 +7,7 @@ import (
 	"os/signal"
 	"time"
 
+	_ "github.com/lib/pq"
 	"github.com/orvosi/api/internal/builder"
 	"github.com/orvosi/api/internal/config"
 	"github.com/orvosi/api/internal/http/server"
