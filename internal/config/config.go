@@ -1,5 +1,11 @@
 package config
 
+import (
+	"github.com/joeshaw/envdecode"
+	"github.com/joho/godotenv"
+	"github.com/pkg/errors"
+)
+
 // Database holds configuration for database.
 type Database struct {
 	Host         string `env:"DATABASE_HOST,default=localhost"`
@@ -16,4 +22,17 @@ type Database struct {
 type Config struct {
 	Port     string `env:"PORT,default=6666"`
 	Database Database
+}
+
+// NewConfig creates an instance of Config.
+// It needs the path of the env file to be used.
+func NewConfig(env string) (*Config, error) {
+	godotenv.Load(env)
+
+	var config Config
+	if err := envdecode.Decode(&config); err != nil {
+		return nil, errors.Wrap(err, "[NewConfig] error decoding env")
+	}
+
+	return &config, nil
 }
