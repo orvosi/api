@@ -12,7 +12,7 @@ type Server struct {
 }
 
 // NewServer creates an instance of Echo.
-func NewServer(routes []*router.Route) *Server {
+func NewServer(jwtDecoder echo.MiddlewareFunc, routes []*router.Route) *Server {
 	e := echo.New()
 
 	e.Use(middleware.Logger())
@@ -20,7 +20,7 @@ func NewServer(routes []*router.Route) *Server {
 	e.Use(middleware.CORS())
 
 	for _, route := range routes {
-		e.Add(route.Method, route.Path, route.Handler)
+		e.Add(route.Method, route.Path, route.Handler, jwtDecoder)
 	}
 
 	return &Server{e}
