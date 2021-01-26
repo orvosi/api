@@ -2,14 +2,19 @@ package usecase
 
 import (
 	"context"
+	"net"
+	"regexp"
+	"strings"
 
 	"github.com/orvosi/api/entity"
 )
 
+var emailRegex = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
+
 // FindMedicalRecord defines the business logic
 // to find a medical record.
 type FindMedicalRecord interface {
-	// Find finds medical records that belong to specific user (based on email).
+	// FindByEmail finds medical records that belong to specific user (based on email).
 	FindByEmail(ctx context.Context, email string) ([]*entity.MedicalRecord, *entity.Error)
 }
 
@@ -30,4 +35,26 @@ func NewMedicalRecordFinder(selector MedicalRecordSelector) *MedicalRecordFinder
 	return &MedicalRecordFinder{
 		selector: selector,
 	}
+}
+
+// FindByEmail finds medical records that belong to specific user (based on email).
+// The email will be verified first using regex and LookupMX.
+func (mf *MedicalRecordFinder) FindByEmail(ctx context.Context, email string) ([]*entity.MedicalRecord, *entity.Error) {
+	if err := validateEmail(email); err != nil {
+		return []*entity.MedicalRecord{}, entity.ErrInvalidEmail
+	}
+	return []*entity.MedicalRecord{}, nil
+}
+
+func validateEmail(email string) *entity.Error {
+	if !emailRegex.MatchString(email) {
+		return entity.ErrInvalidEmail
+	}
+
+	parts := strings.Split(email, "@")
+	mx, err := net.LookupMX(parts[1])
+	if err != nil || len(mx) == 0 {
+		return entity.ErrInvalidEmail
+	}
+	return nil
 }
