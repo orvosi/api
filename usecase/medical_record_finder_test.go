@@ -60,6 +60,17 @@ func TestMedicalRecordFinder_FindByEmail(t *testing.T) {
 		assert.Equal(t, entity.ErrInvalidEmail, err)
 		assert.Empty(t, res)
 	})
+
+	t.Run("selector returns error", func(t *testing.T) {
+		exec := createMedicalRecordFinderExecutor(ctrl)
+
+		exec.selector.EXPECT().FindByEmail(context.Background(), "dummy@dummy.com").Return([]*entity.MedicalRecord{}, entity.ErrInternalServer)
+		res, err := exec.usecase.FindByEmail(context.Background(), "dummy@dummy.com")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, entity.ErrInternalServer, err)
+		assert.Empty(t, res)
+	})
 }
 
 func createMedicalRecordFinderExecutor(ctrl *gomock.Controller) *MedicalRecordFinder_Executor {
