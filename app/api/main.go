@@ -10,7 +10,9 @@ import (
 	_ "github.com/lib/pq"
 	"github.com/orvosi/api/internal/builder"
 	"github.com/orvosi/api/internal/config"
+	"github.com/orvosi/api/internal/http/middleware"
 	"github.com/orvosi/api/internal/http/server"
+	"github.com/orvosi/api/internal/tool"
 )
 
 const (
@@ -24,8 +26,12 @@ func main() {
 	db, err := builder.BuildSQLDatabase(dbDriver, cfg)
 	checkError(err)
 
+	jwtDec := tool.NewIDTokenDecoder(cfg.Google.Audience)
+	jwtMidd := middleware.WithJWTDecoder(jwtDec.Decode)
+
 	medRecCreator := builder.BuildMedicalRecordCreator(cfg, db)
-	srv := server.NewServer(medRecCreator)
+
+	srv := server.NewServer(jwtMidd, medRecCreator)
 	runServer(srv, cfg.Port)
 	waitForShutdown(srv)
 }
