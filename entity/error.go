@@ -20,6 +20,10 @@ var (
 	ErrInvalidMedicalRecordAttribute = NewError("02-002", "Medical record's attributes are invalid. Please, check all attributes")
 	// ErrInvalidMedicalRecordRequest indicates that a medical record request that is sent over HTTP is invalid.
 	ErrInvalidMedicalRecordRequest = NewError("02-003", "Medical record request is invalid. Please, check the JSON request")
+	// ErrInvalidEmail indicates that the email passed is invalid.
+	// The validation is run using regex "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$"
+	// and LookupMX from net package.
+	ErrInvalidEmail = NewError("02-004", "Email is invalid. Please, check the email")
 )
 
 // Error represents a data structure for error.
