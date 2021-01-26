@@ -6,6 +6,10 @@ var (
 	// ErrInternalServer indicates there is unexpected problem occurs in the system itself.
 	// The detail of the error/problem should be known in internal message.
 	ErrInternalServer = NewError("01-001", "Internal server error")
+	// ErrUnauthorized is returned when a request doesn't include authorization in its header.
+	// The authorization must be using bearer authorization.
+	// It also can be returned if the authorization is invalid.
+	ErrUnauthorized = NewError("01-002", "Request is unauthorized")
 
 	// ErrEmptyMedicalRecord indicates that a medical record is empty or null.
 	ErrEmptyMedicalRecord = NewError("02-001", "MedicalRecord is empty")
