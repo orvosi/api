@@ -5,8 +5,10 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/orvosi/api/internal/http/handler"
+	"github.com/orvosi/api/internal/http/middleware"
 	"github.com/orvosi/api/internal/http/router"
 	"github.com/orvosi/api/internal/http/server"
+	"github.com/orvosi/api/internal/tool"
 	mock_usecase "github.com/orvosi/api/test/mock/usecase"
 	"github.com/stretchr/testify/assert"
 )
@@ -29,5 +31,7 @@ func createMedicalRecordCreator(ctrl *gomock.Controller) *handler.MedicalRecordC
 func createServer(ctrl *gomock.Controller) *server.Server {
 	c := createMedicalRecordCreator(ctrl)
 	r := router.MedicalRecordCreator(c)
-	return server.NewServer(r)
+	d := tool.NewIDTokenDecoder("audience")
+	m := middleware.WithJWTDecoder(d.Decode)
+	return server.NewServer(m, r)
 }
