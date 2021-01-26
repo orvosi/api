@@ -43,7 +43,8 @@ func (mf *MedicalRecordFinder) FindByEmail(ctx context.Context, email string) ([
 	if err := validateEmail(email); err != nil {
 		return []*entity.MedicalRecord{}, entity.ErrInvalidEmail
 	}
-	return []*entity.MedicalRecord{}, nil
+
+	return mf.selector.FindByEmail(ctx, email)
 }
 
 func validateEmail(email string) *entity.Error {
