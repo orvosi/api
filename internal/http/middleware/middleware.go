@@ -20,6 +20,9 @@ const (
 	// ContextKeyUser is just a string "user" defined as a key
 	// to save a user information in context.
 	ContextKeyUser = ContextKey("user")
+
+	authHeaderKey = "Authorization"
+	authBearerKey = "Bearer"
 )
 
 // JWTDecoder defines the function contract to decode JWT.
@@ -31,9 +34,9 @@ type JWTDecoder func(token string) (*entity.User, *entity.Error)
 func WithJWTDecoder(decoder JWTDecoder) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(ctx echo.Context) error {
-			val := ctx.Request().Header.Get("Authorization")
+			val := ctx.Request().Header.Get(authHeaderKey)
 			token := strings.Split(val, " ")
-			if len(token) != 2 || (len(token) == 2 && token[0] != "Bearer") {
+			if len(token) != 2 || (len(token) == 2 && token[0] != authBearerKey) {
 				res := response.NewError(entity.ErrUnauthorized)
 				ctx.JSON(http.StatusUnauthorized, res)
 				return entity.ErrUnauthorized
