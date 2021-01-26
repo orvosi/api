@@ -4,9 +4,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/orvosi/api/entity"
-
 	"github.com/golang/mock/gomock"
+	"github.com/orvosi/api/entity"
 	mock_usecase "github.com/orvosi/api/test/mock/usecase"
 	"github.com/orvosi/api/usecase"
 	"github.com/stretchr/testify/assert"
@@ -70,6 +69,17 @@ func TestMedicalRecordFinder_FindByEmail(t *testing.T) {
 		assert.NotNil(t, err)
 		assert.Equal(t, entity.ErrInternalServer, err)
 		assert.Empty(t, res)
+	})
+
+	t.Run("successfully find medical records bounded to specific email", func(t *testing.T) {
+		exec := createMedicalRecordFinderExecutor(ctrl)
+
+		exec.selector.EXPECT().FindByEmail(context.Background(), "dummy@dummy.com").Return([]*entity.MedicalRecord{&entity.MedicalRecord{}}, nil)
+		res, err := exec.usecase.FindByEmail(context.Background(), "dummy@dummy.com")
+
+		assert.Nil(t, err)
+		assert.NotEmpty(t, res)
+		assert.Equal(t, 1, len(res))
 	})
 }
 
