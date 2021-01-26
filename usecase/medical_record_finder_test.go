@@ -40,6 +40,16 @@ func TestMedicalRecordFinder_FindByEmail(t *testing.T) {
 		assert.Equal(t, entity.ErrInvalidEmail, err)
 		assert.Empty(t, res)
 	})
+
+	t.Run("email doesn't contain domain", func(t *testing.T) {
+		exec := createMedicalRecordFinderExecutor(ctrl)
+
+		res, err := exec.usecase.FindByEmail(context.Background(), "dummy@")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, entity.ErrInvalidEmail, err)
+		assert.Empty(t, res)
+	})
 }
 
 func createMedicalRecordFinderExecutor(ctrl *gomock.Controller) *MedicalRecordFinder_Executor {
