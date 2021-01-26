@@ -26,6 +26,7 @@ func TestWithJWTDecoder(t *testing.T) {
 		err := hdr(ctx)
 
 		assert.NotNil(t, err)
+		assert.Equal(t, http.StatusUnauthorized, rec.Code)
 		assert.Equal(t, entity.ErrUnauthorized, err)
 	})
 
@@ -44,6 +45,7 @@ func TestWithJWTDecoder(t *testing.T) {
 		err := hdr(ctx)
 
 		assert.NotNil(t, err)
+		assert.Equal(t, http.StatusUnauthorized, rec.Code)
 		assert.Equal(t, entity.ErrUnauthorized, err)
 	})
 
@@ -62,6 +64,7 @@ func TestWithJWTDecoder(t *testing.T) {
 		err := hdr(ctx)
 
 		assert.NotNil(t, err)
+		assert.Equal(t, http.StatusUnauthorized, rec.Code)
 		assert.Equal(t, entity.ErrUnauthorized, err)
 	})
 
@@ -80,6 +83,7 @@ func TestWithJWTDecoder(t *testing.T) {
 		err := hdr(ctx)
 
 		assert.NotNil(t, err)
+		assert.Equal(t, http.StatusUnauthorized, rec.Code)
 		assert.Equal(t, entity.ErrUnauthorized, err)
 	})
 }
