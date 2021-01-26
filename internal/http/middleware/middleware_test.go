@@ -64,11 +64,29 @@ func TestWithJWTDecoder(t *testing.T) {
 		assert.NotNil(t, err)
 		assert.Equal(t, entity.ErrUnauthorized, err)
 	})
+
+	t.Run("jwt decoder func returns error", func(t *testing.T) {
+		req := httptest.NewRequest(http.MethodGet, "/", nil)
+		req.Header.Set(echo.HeaderAuthorization, "Bearer jwt-token")
+		rec := httptest.NewRecorder()
+
+		e := echo.New()
+		ctx := e.NewContext(req, rec)
+
+		hdr := createHandler()
+		dec := createErrorDecoder()
+		hdr = middleware.WithJWTDecoder(dec)(hdr)
+
+		err := hdr(ctx)
+
+		assert.NotNil(t, err)
+		assert.Equal(t, entity.ErrUnauthorized, err)
+	})
 }
 
 func createErrorDecoder() middleware.JWTDecoder {
 	return func(token string) (*entity.User, *entity.Error) {
-		return nil, entity.ErrInternalServer
+		return nil, entity.ErrUnauthorized
 	}
 }
 
