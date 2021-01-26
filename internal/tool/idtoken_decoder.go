@@ -23,7 +23,7 @@ func NewIDTokenDecoder(audience string) *IDTokenDecoder {
 func (id *IDTokenDecoder) Decode(googleToken string) (*entity.User, *entity.Error) {
 	payload, err := idtoken.Validate(context.Background(), googleToken, id.audience)
 	if err != nil {
-		return nil, entity.WrapError(entity.ErrUnauthorized, err.Error())
+		return nil, entity.WrapError(entity.ErrInvalidGoogleToken, err.Error())
 	}
 
 	user := payloadToUser(payload)
