@@ -28,6 +28,24 @@ func TestWithJWTDecoder(t *testing.T) {
 		assert.NotNil(t, err)
 		assert.Equal(t, entity.ErrUnauthorized, err)
 	})
+
+	t.Run("token length is not 2 (invalid)", func(t *testing.T) {
+		req := httptest.NewRequest(http.MethodGet, "/", nil)
+		req.Header.Set(echo.HeaderAuthorization, "invalid-token")
+		rec := httptest.NewRecorder()
+
+		e := echo.New()
+		ctx := e.NewContext(req, rec)
+
+		hdr := createHandler()
+		dec := createNormalDecoder()
+		hdr = middleware.WithJWTDecoder(dec)(hdr)
+
+		err := hdr(ctx)
+
+		assert.NotNil(t, err)
+		assert.Equal(t, entity.ErrUnauthorized, err)
+	})
 }
 
 func createErrorDecoder() middleware.JWTDecoder {
