@@ -10,6 +10,9 @@ var (
 	// The authorization must be using bearer authorization.
 	// It also can be returned if the authorization is invalid.
 	ErrUnauthorized = NewError("01-002", "Request is unauthorized")
+	// ErrInvalidGoogleToken is returned when the id token is invalid,
+	// whether it has expired or it is not google id token.
+	ErrInvalidGoogleToken = NewError("01-003", "Google ID Token is invalid")
 
 	// ErrEmptyMedicalRecord indicates that a medical record is empty or null.
 	ErrEmptyMedicalRecord = NewError("02-001", "MedicalRecord is empty")
