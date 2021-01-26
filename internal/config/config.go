@@ -18,10 +18,16 @@ type Database struct {
 	MaxIdleConns int    `env:"DATABASE_MAX_IDLE_CONNS,default=1"`
 }
 
+// Google holds configuration related to Google.
+type Google struct {
+	Audience string `env:"GOOGLE_AUDIENCE,required"`
+}
+
 // Config holds configuration for the project.
 type Config struct {
 	Port     string `env:"PORT,default=6666"`
 	Database Database
+	Google   Google
 }
 
 // NewConfig creates an instance of Config.
