@@ -31,8 +31,8 @@ func NewIDTokenDecoder(audience string, credential []byte) (*IDTokenDecoder, err
 }
 
 // Decode decodes google token.
-func (id *IDTokenDecoder) Decode(ctx context.Context, googleToken string) (*entity.User, *entity.Error) {
-	payload, err := id.validator.Validate(ctx, googleToken, id.audience)
+func (id *IDTokenDecoder) Decode(googleToken string) (*entity.User, *entity.Error) {
+	payload, err := id.validator.Validate(context.Background(), googleToken, id.audience)
 	if err != nil {
 		return nil, entity.WrapError(entity.ErrUnauthorized, err.Error())
 	}
