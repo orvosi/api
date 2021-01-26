@@ -4,35 +4,24 @@ import (
 	"context"
 
 	"github.com/orvosi/api/entity"
-	"github.com/pkg/errors"
 	"google.golang.org/api/idtoken"
 )
 
 // IDTokenDecoder responsibles for decoding google's ID token.
 type IDTokenDecoder struct {
-	validator *idtoken.Validator
-	audience  string
+	audience string
 }
 
 // NewIDTokenDecoder creates an instance of IDTokenDecoder.
-func NewIDTokenDecoder(audience string, credential []byte) (*IDTokenDecoder, error) {
-	v, err := idtoken.NewValidator(
-		context.Background(),
-		idtoken.WithCredentialsJSON(credential),
-	)
-	if err != nil {
-		return nil, errors.Wrap(err, "[NewIDTokenDecoder] fail to create IDTokenDecoder")
-	}
-
+func NewIDTokenDecoder(audience string) *IDTokenDecoder {
 	return &IDTokenDecoder{
-		validator: v,
-		audience:  audience,
-	}, nil
+		audience: audience,
+	}
 }
 
 // Decode decodes google token.
 func (id *IDTokenDecoder) Decode(googleToken string) (*entity.User, *entity.Error) {
-	payload, err := id.validator.Validate(context.Background(), googleToken, id.audience)
+	payload, err := idtoken.Validate(context.Background(), googleToken, id.audience)
 	if err != nil {
 		return nil, entity.WrapError(entity.ErrUnauthorized, err.Error())
 	}
