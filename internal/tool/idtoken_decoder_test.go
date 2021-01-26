@@ -3,6 +3,7 @@ package tool_test
 import (
 	"testing"
 
+	"github.com/orvosi/api/entity"
 	"github.com/orvosi/api/internal/tool"
 	"github.com/stretchr/testify/assert"
 )
@@ -25,6 +26,7 @@ func TestIDTokenDecoder_Decode(t *testing.T) {
 		user, err := dec.Decode(token)
 
 		assert.NotNil(t, err)
+		assert.Equal(t, entity.ErrInvalidGoogleToken, err)
 		assert.Nil(t, user)
 	})
 }
