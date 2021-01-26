@@ -1,7 +1,10 @@
 package usecase_test
 
 import (
+	"context"
 	"testing"
+
+	"github.com/orvosi/api/entity"
 
 	"github.com/golang/mock/gomock"
 	mock_usecase "github.com/orvosi/api/test/mock/usecase"
@@ -21,6 +24,21 @@ func TestNewMedicalRecordFinder(t *testing.T) {
 	t.Run("successfully create an instance of MedicalRecordFinder", func(t *testing.T) {
 		exec := createMedicalRecordFinderExecutor(ctrl)
 		assert.NotNil(t, exec.usecase)
+	})
+}
+
+func TestMedicalRecordFinder_FindByEmail(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	t.Run("email doesn't contain username", func(t *testing.T) {
+		exec := createMedicalRecordFinderExecutor(ctrl)
+
+		res, err := exec.usecase.FindByEmail(context.Background(), "@dummy.com")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, entity.ErrInvalidEmail, err)
+		assert.Empty(t, res)
 	})
 }
 
