@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/golang/mock/gomock"
 	"github.com/indrasaputra/hashids"
 	"github.com/orvosi/api/entity"
 	"github.com/orvosi/api/internal/repository"
@@ -20,21 +19,15 @@ type MedicalRecordInserter_Executor struct {
 }
 
 func TestNewMedicalRecordInserter(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
 	t.Run("successfully create an instance of MedicalRecordInserter", func(t *testing.T) {
-		exec := createMedicalRecordInserterExecutor(ctrl)
+		exec := createMedicalRecordInserterExecutor()
 		assert.NotNil(t, exec.repo)
 	})
 }
 
 func TestMedicalRecordInserter_Insert(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
 	t.Run("can't proceed due to nil medical record", func(t *testing.T) {
-		exec := createMedicalRecordInserterExecutor(ctrl)
+		exec := createMedicalRecordInserterExecutor()
 
 		err := exec.repo.Insert(context.Background(), nil)
 
@@ -43,7 +36,7 @@ func TestMedicalRecordInserter_Insert(t *testing.T) {
 	})
 
 	t.Run("query doesn't return inserted id", func(t *testing.T) {
-		exec := createMedicalRecordInserterExecutor(ctrl)
+		exec := createMedicalRecordInserterExecutor()
 		record := createValidMedicalRecord()
 
 		exec.sql.ExpectQuery(`INSERT INTO medical_records \(user_id, symptom, diagnosis, therapy, created_at, updated_at, created_by, updated_by\)`).
@@ -56,7 +49,7 @@ func TestMedicalRecordInserter_Insert(t *testing.T) {
 	})
 
 	t.Run("successfully insert a new medical record", func(t *testing.T) {
-		exec := createMedicalRecordInserterExecutor(ctrl)
+		exec := createMedicalRecordInserterExecutor()
 		record := createValidMedicalRecord()
 
 		exec.sql.ExpectQuery(`INSERT INTO medical_records \(user_id, symptom, diagnosis, therapy, created_at, updated_at, created_by, updated_by\)`).
@@ -88,7 +81,7 @@ func createValidMedicalRecord() *entity.MedicalRecord {
 	}
 }
 
-func createMedicalRecordInserterExecutor(ctrl *gomock.Controller) *MedicalRecordInserter_Executor {
+func createMedicalRecordInserterExecutor() *MedicalRecordInserter_Executor {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		log.Panicf("error opening a stub database connection: %v\n", err)
