@@ -55,6 +55,23 @@ func TestMedicalRecordSelector_FindByEmail(t *testing.T) {
 		assert.NotEmpty(t, res)
 		assert.Equal(t, 1, len(res))
 	})
+
+	t.Run("successfully retrieve all rows", func(t *testing.T) {
+		exec := createMedicalRecordSelectorExecutor()
+
+		exec.sql.ExpectQuery(`SELECT id, symptom, diagnosis, therapy, result, updated_at FROM medical_records WHERE email = \$1 ORDER BY id ASC`).
+			WillReturnRows(sqlmock.
+				NewRows([]string{"id", "symptom", "diagnosis", "therapy", "result", "updated_at"}).
+				AddRow(1, "Symptom", "Diagnosis", "Therapy", "Result", time.Now()).
+				AddRow(2, "Symptom", "Diagnosis", "Therapy", "Result", time.Now()),
+			)
+
+		res, err := exec.repo.FindByEmail(context.Background(), "dummy@dummy.com")
+
+		assert.Nil(t, err)
+		assert.NotEmpty(t, res)
+		assert.Equal(t, 2, len(res))
+	})
 }
 
 func createMedicalRecordSelectorExecutor() *MedicalRecordSelector_Executor {
