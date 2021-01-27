@@ -5,6 +5,7 @@ import (
 	"errors"
 	"log"
 	"testing"
+	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/orvosi/api/entity"
@@ -28,7 +29,7 @@ func TestMedicalRecordSelector_FindByEmail(t *testing.T) {
 	t.Run("select query returns error", func(t *testing.T) {
 		exec := createMedicalRecordSelectorExecutor()
 
-		exec.sql.ExpectQuery(`SELECT id, symptom, diagnosis, therapy, result, updated_at FROM medical_records WHERE email = dummy@dummy.com ORDER BY id ASC`).
+		exec.sql.ExpectQuery(`SELECT id, symptom, diagnosis, therapy, result, updated_at FROM medical_records WHERE email = \$1 ORDER BY id ASC`).
 			WillReturnError(errors.New("fail to select from database"))
 
 		res, err := exec.repo.FindByEmail(context.Background(), "dummy@dummy.com")
@@ -36,6 +37,23 @@ func TestMedicalRecordSelector_FindByEmail(t *testing.T) {
 		assert.NotNil(t, err)
 		assert.Equal(t, entity.ErrInternalServer, err)
 		assert.Empty(t, res)
+	})
+
+	t.Run("row scan returns error", func(t *testing.T) {
+		exec := createMedicalRecordSelectorExecutor()
+
+		exec.sql.ExpectQuery(`SELECT id, symptom, diagnosis, therapy, result, updated_at FROM medical_records WHERE email = \$1 ORDER BY id ASC`).
+			WillReturnRows(sqlmock.
+				NewRows([]string{"id", "symptom", "diagnosis", "therapy", "result", "updated_at"}).
+				AddRow(1, "Symptom", "Diagnosis", "Therapy", "Result", time.Now()).
+				AddRow(2, "Symptom", "Diagnosis", "Therapy", "Result", "time.Now()"),
+			)
+
+		res, err := exec.repo.FindByEmail(context.Background(), "dummy@dummy.com")
+
+		assert.Nil(t, err)
+		assert.NotEmpty(t, res)
+		assert.Equal(t, 1, len(res))
 	})
 }
 
