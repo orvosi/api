@@ -1,10 +1,13 @@
 package repository_test
 
 import (
+	"context"
+	"errors"
 	"log"
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/orvosi/api/entity"
 	"github.com/orvosi/api/internal/repository"
 	"github.com/stretchr/testify/assert"
 )
@@ -18,6 +21,21 @@ func TestNewMedicalRecordSelector(t *testing.T) {
 	t.Run("successfully create an instance of MedicalRecordSelector", func(t *testing.T) {
 		exec := createMedicalRecordSelectorExecutor()
 		assert.NotNil(t, exec.repo)
+	})
+}
+
+func TestMedicalRecordSelector_FindByEmail(t *testing.T) {
+	t.Run("select query returns error", func(t *testing.T) {
+		exec := createMedicalRecordSelectorExecutor()
+
+		exec.sql.ExpectQuery(`SELECT id, symptom, diagnosis, therapy, result, updated_at FROM medical_records WHERE email = dummy@dummy.com ORDER BY id ASC`).
+			WillReturnError(errors.New("fail to select from database"))
+
+		res, err := exec.repo.FindByEmail(context.Background(), "dummy@dummy.com")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, entity.ErrInternalServer, err)
+		assert.Empty(t, res)
 	})
 }
 
