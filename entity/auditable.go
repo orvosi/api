@@ -9,9 +9,9 @@ import "time"
 // Every struct that is considered to be auditable must
 // compose Auditable.
 type Auditable struct {
-	CreatedBy string `json:"created_at"`
-	UpdatedBy string `json:"updated_at"`
+	CreatedBy string
+	UpdatedBy string
 
-	CreatedAt time.Time `json:"created_by"`
-	UpdatedAt time.Time `json:"updated_by"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }
