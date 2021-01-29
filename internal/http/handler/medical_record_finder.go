@@ -78,25 +78,25 @@ func (mf *MedicalRecordFinder) FindByID(ctx echo.Context) error {
 // It extracts the user's email from bearer token
 // then finds all medical records bounded to the user.
 func (mf *MedicalRecordFinder) FindByEmail(ctx echo.Context) error {
-	user, err := extractUserFromRequestContext(ctx.Request().Context())
-	if err != nil {
-		res := response.NewError(err)
+	user, cerr := extractUserFromRequestContext(ctx.Request().Context())
+	if cerr != nil {
+		res := response.NewError(cerr)
 		ctx.JSON(http.StatusInternalServerError, res)
-		return err
+		return cerr
 	}
 
-	mrs, ferr := mf.finder.FindByEmail(ctx.Request().Context(), user.Email)
+	records, ferr := mf.finder.FindByEmail(ctx.Request().Context(), user.Email)
 	if ferr != nil {
-		resp := response.NewError(ferr)
+		res := response.NewError(ferr)
 		status := http.StatusInternalServerError
 		if ferr.Code != entity.ErrInternalServer.Code {
 			status = http.StatusBadRequest
 		}
-		ctx.JSON(status, resp)
+		ctx.JSON(status, res)
 		return ferr
 	}
 
-	res := createMedicalRecordResponses(mrs)
+	res := createMedicalRecordResponses(records)
 	ctx.JSON(http.StatusOK, response.NewSuccess(res, response.EmptyMeta{}))
 	return nil
 }
