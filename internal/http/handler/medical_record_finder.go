@@ -35,11 +35,12 @@ func (mf *MedicalRecordFinder) FindByEmail(ctx echo.Context) error {
 
 	res, ferr := mf.finder.FindByEmail(ctx.Request().Context(), user.Email)
 	if ferr != nil {
+		resp := response.NewError(ferr)
 		status := http.StatusInternalServerError
 		if ferr.Code != entity.ErrInternalServer.Code {
 			status = http.StatusBadRequest
 		}
-		ctx.JSON(status, res)
+		ctx.JSON(status, resp)
 		return ferr
 	}
 
