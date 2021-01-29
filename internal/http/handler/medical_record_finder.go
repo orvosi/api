@@ -62,8 +62,6 @@ func (mf *MedicalRecordFinder) FindByID(ctx echo.Context) error {
 		status := http.StatusInternalServerError
 		if ferr.Code == entity.ErrUnauthorized.Code {
 			status = http.StatusUnauthorized
-		} else if ferr.Code != entity.ErrInternalServer.Code {
-			status = http.StatusBadRequest
 		}
 		ctx.JSON(status, res)
 		return ferr
