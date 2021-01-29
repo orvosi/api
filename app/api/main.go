@@ -30,8 +30,9 @@ func main() {
 	jwtMidd := middleware.WithJWTDecoder(jwtDec.Decode)
 
 	medRecCreator := builder.BuildMedicalRecordCreator(cfg, db)
+	medRecFinder := builder.BuildMedicalRecordFinder(cfg, db)
 
-	srv := server.NewServer(jwtMidd, medRecCreator)
+	srv := server.NewServer(jwtMidd, append(medRecCreator, medRecFinder...))
 	runServer(srv, cfg.Port)
 	waitForShutdown(srv)
 }
