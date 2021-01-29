@@ -72,6 +72,27 @@ func TestMedicalRecordFinder_FindByID(t *testing.T) {
 		str := fmt.Sprintf("%s\n", `{"errors":[{"code":"01-001","message":"Internal server error"}],"meta":null}`)
 		assert.Equal(t, str, rec.Body.String())
 	})
+
+	t.Run("medical record is not owned by given email", func(t *testing.T) {
+		req := httptest.NewRequest(http.MethodGet, "/", nil)
+		user := createUserInformation()
+		req = req.WithContext(context.WithValue(context.Background(), middleware.ContextKeyUser, user))
+
+		rec := httptest.NewRecorder()
+		e := echo.New()
+		ctx := e.NewContext(req, rec)
+		ctx.SetPath("/medical-records/:id")
+		ctx.SetParamNames("id")
+		ctx.SetParamValues("oWx0b8DZ1a")
+
+		exec := createMedicalRecordFinderExecutor(ctrl)
+		exec.usecase.EXPECT().FindByID(ctx.Request().Context(), uint64(1), user.Email).Return(nil, entity.ErrUnauthorized)
+		exec.handler.FindByID(ctx)
+
+		assert.Equal(t, http.StatusUnauthorized, rec.Code)
+		str := fmt.Sprintf("%s\n", `{"errors":[{"code":"01-002","message":"Request is unauthorized"}],"meta":null}`)
+		assert.Equal(t, str, rec.Body.String())
+	})
 }
 
 func TestMedicalRecordFinder_FindByEmail(t *testing.T) {
