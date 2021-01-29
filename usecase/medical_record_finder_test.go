@@ -26,6 +26,22 @@ func TestNewMedicalRecordFinder(t *testing.T) {
 	})
 }
 
+func TestMedicalRecordFinder_FindByID(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	t.Run("selector returns error", func(t *testing.T) {
+		exec := createMedicalRecordFinderExecutor(ctrl)
+
+		exec.selector.EXPECT().FindByID(context.Background(), uint64(1)).Return(&entity.MedicalRecord{}, entity.ErrInternalServer)
+		res, err := exec.usecase.FindByID(context.Background(), uint64(1), "dummy@dummy.com")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, entity.ErrInternalServer, err)
+		assert.Nil(t, res)
+	})
+}
+
 func TestMedicalRecordFinder_FindByEmail(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
