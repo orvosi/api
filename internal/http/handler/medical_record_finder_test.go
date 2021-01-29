@@ -114,6 +114,27 @@ func TestMedicalRecordFinder_FindByID(t *testing.T) {
 		str := fmt.Sprintf("%s\n", `{"errors":[{"code":"01-001","message":"Internal server error"}],"meta":null}`)
 		assert.Equal(t, str, rec.Body.String())
 	})
+
+	t.Run("successfully get medical record owned by certain email", func(t *testing.T) {
+		req := httptest.NewRequest(http.MethodGet, "/", nil)
+		user := createUserInformation()
+		req = req.WithContext(context.WithValue(context.Background(), middleware.ContextKeyUser, user))
+
+		rec := httptest.NewRecorder()
+		e := echo.New()
+		ctx := e.NewContext(req, rec)
+		ctx.SetPath("/medical-records/:id")
+		ctx.SetParamNames("id")
+		ctx.SetParamValues("oWx0b8DZ1a")
+
+		exec := createMedicalRecordFinderExecutor(ctrl)
+		exec.usecase.EXPECT().FindByID(ctx.Request().Context(), uint64(1), user.Email).Return(createMedicalRecords()[0], nil)
+		exec.handler.FindByID(ctx)
+
+		assert.Equal(t, http.StatusOK, rec.Code)
+		str := fmt.Sprintf("%s\n", `{"data":{"id":"oWx0b8DZ1a","symptom":"Symptom","diagnosis":"Diagnosis","therapy":"Therapy","result":"Result","created_by":"user@dummy.com","created_at":"2021-01-28T15:00:00Z","updated_by":"user@dummy.com","updated_at":"2021-01-28T15:00:00Z"},"meta":{}}`)
+		assert.Equal(t, str, rec.Body.String())
+	})
 }
 
 func TestMedicalRecordFinder_FindByEmail(t *testing.T) {
