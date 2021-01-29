@@ -4,20 +4,20 @@ import "github.com/indrasaputra/hashids"
 
 // MedicalRecord holds the user's medical record data
 type MedicalRecord struct {
-	ID        hashids.ID `json:"id"`
-	User      *User      `json:"user"`
-	Symptom   string     `json:"symptom"`
-	Diagnosis string     `json:"diagnosis"`
-	Therapy   string     `json:"therapy"`
-	Result    string     `json:"result"`
+	ID        hashids.ID
+	User      *User
+	Symptom   string
+	Diagnosis string
+	Therapy   string
+	Result    string
 	Auditable
 }
 
 // User holds user's information.
 type User struct {
-	ID       hashids.ID `json:"id"`
-	Email    string     `json:"email"`
-	Name     string     `json:"name"`
-	GoogleID string     `json:"google_id"`
+	ID       hashids.ID
+	Email    string
+	Name     string
+	GoogleID string
 	Auditable
 }
