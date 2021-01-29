@@ -37,6 +37,43 @@ func NewMedicalRecordFinder(finder usecase.FindMedicalRecord) *MedicalRecordFind
 	}
 }
 
+// FindByID handles `GET /medical-records/:id` endpoint.
+// It extracts the user's email from bearer token
+// then finds all medical records bounded to the user.
+func (mf *MedicalRecordFinder) FindByID(ctx echo.Context) error {
+	str := ctx.Param("id")
+	id, herr := hashids.DecodeHash([]byte(str))
+	if herr != nil {
+		res := response.NewError(entity.ErrInvalidID)
+		ctx.JSON(http.StatusInternalServerError, res)
+		return herr
+	}
+
+	user, cerr := extractUserFromRequestContext(ctx.Request().Context())
+	if cerr != nil {
+		res := response.NewError(cerr)
+		ctx.JSON(http.StatusInternalServerError, res)
+		return cerr
+	}
+
+	record, ferr := mf.finder.FindByID(ctx.Request().Context(), uint64(id), user.Email)
+	if ferr != nil {
+		res := response.NewError(ferr)
+		status := http.StatusInternalServerError
+		if ferr.Code == entity.ErrUnauthorized.Code {
+			status = http.StatusUnauthorized
+		} else if ferr.Code != entity.ErrInternalServer.Code {
+			status = http.StatusBadRequest
+		}
+		ctx.JSON(status, res)
+		return ferr
+	}
+
+	res := createMedicalRecordResponse(record)
+	ctx.JSON(http.StatusOK, response.NewSuccess(res, response.EmptyMeta{}))
+	return nil
+}
+
 // FindByEmail handles `GET /medical-records` endpoint.
 // It extracts the user's email from bearer token
 // then finds all medical records bounded to the user.
