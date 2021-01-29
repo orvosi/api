@@ -20,25 +20,15 @@ func NewMedicalRecordSelector(db *sql.DB) *MedicalRecordSelector {
 }
 
 // FindByID finds medical record by its id.
-func (ms *MedicalRecordSelector) FindByID(ctx context.Context, id uint64) ([]*entity.MedicalRecord, *entity.Error) {
+func (ms *MedicalRecordSelector) FindByID(ctx context.Context, id uint64) (*entity.MedicalRecord, *entity.Error) {
 	query := "SELECT id, symptom, diagnosis, therapy, result, updated_at FROM medical_records WHERE id = $1 LIMIT 1"
-	rows, err := ms.db.QueryContext(ctx, query, id)
-	if err != nil {
-		return []*entity.MedicalRecord{}, entity.WrapError(entity.ErrInternalServer, err.Error())
-	}
-	defer rows.Close()
+	row := ms.db.QueryRowContext(ctx, query, id)
 
-	var result []*entity.MedicalRecord
-	for rows.Next() {
-		var tmp entity.MedicalRecord
-		if err := rows.Scan(&tmp.ID, &tmp.Symptom, &tmp.Diagnosis, &tmp.Therapy, &tmp.Result, &tmp.UpdatedAt); err != nil {
-			log.Printf("[MedicalRecordSelector-FindByID] scan rows error: %v", err)
-			continue
-		}
-
-		result = append(result, &tmp)
+	var mr entity.MedicalRecord
+	if err := row.Scan(&mr.ID, &mr.Symptom, &mr.Diagnosis, &mr.Therapy, &mr.Result, &mr.UpdatedAt); err != nil {
+		return nil, entity.WrapError(entity.ErrInternalServer, err.Error())
 	}
-	return result, nil
+	return &mr, nil
 }
 
 // FindByEmail finds all medical records bounded to specific email.
