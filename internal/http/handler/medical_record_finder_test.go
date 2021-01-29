@@ -1,6 +1,7 @@
 package handler_test
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -8,7 +9,9 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/labstack/echo/v4"
+	"github.com/orvosi/api/entity"
 	"github.com/orvosi/api/internal/http/handler"
+	"github.com/orvosi/api/internal/http/middleware"
 	mock_usecase "github.com/orvosi/api/test/mock/usecase"
 	"github.com/stretchr/testify/assert"
 )
@@ -44,6 +47,24 @@ func TestMedicalRecordFinder_FindByEmail(t *testing.T) {
 
 		assert.Equal(t, http.StatusInternalServerError, rec.Code)
 		str := fmt.Sprintf("%s\n", `{"errors":[{"code":"01-001","message":"Internal server error"}],"meta":null}`)
+		assert.Equal(t, str, rec.Body.String())
+	})
+
+	t.Run("finder service returns 4xx error", func(t *testing.T) {
+		req := httptest.NewRequest(http.MethodGet, "/medical-records", nil)
+		user := createUserInformation()
+		req = req.WithContext(context.WithValue(context.Background(), middleware.ContextKeyUser, user))
+
+		rec := httptest.NewRecorder()
+		e := echo.New()
+		ctx := e.NewContext(req, rec)
+
+		exec := createMedicalRecordFinderExecutor(ctrl)
+		exec.usecase.EXPECT().FindByEmail(ctx.Request().Context(), user.Email).Return([]*entity.MedicalRecord{}, entity.ErrInvalidEmail)
+		exec.handler.FindByEmail(ctx)
+
+		assert.Equal(t, http.StatusBadRequest, rec.Code)
+		str := fmt.Sprintf("%s\n", `{"errors":[{"code":"02-004","message":"Email is invalid. Please, check the email"}],"meta":null}`)
 		assert.Equal(t, str, rec.Body.String())
 	})
 }
