@@ -21,14 +21,16 @@ func NewMedicalRecordSelector(db *sql.DB) *MedicalRecordSelector {
 
 // FindByID finds medical record by its id.
 func (ms *MedicalRecordSelector) FindByID(ctx context.Context, id uint64) (*entity.MedicalRecord, *entity.Error) {
-	query := "SELECT id, symptom, diagnosis, therapy, result, updated_at FROM medical_records WHERE id = $1 LIMIT 1"
+	query := "SELECT id, symptom, diagnosis, therapy, result, updated_at, email FROM medical_records WHERE id = $1 LIMIT 1"
 	row := ms.db.QueryRowContext(ctx, query, id)
 
-	var mr entity.MedicalRecord
-	if err := row.Scan(&mr.ID, &mr.Symptom, &mr.Diagnosis, &mr.Therapy, &mr.Result, &mr.UpdatedAt); err != nil {
+	mr := &entity.MedicalRecord{
+		User: &entity.User{},
+	}
+	if err := row.Scan(&mr.ID, &mr.Symptom, &mr.Diagnosis, &mr.Therapy, &mr.Result, &mr.UpdatedAt, &mr.User.Email); err != nil {
 		return nil, entity.WrapError(entity.ErrInternalServer, err.Error())
 	}
-	return &mr, nil
+	return mr, nil
 }
 
 // FindByEmail finds all medical records bounded to specific email.
