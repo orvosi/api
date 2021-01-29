@@ -45,32 +45,29 @@ func TestMedicalRecordSelector_FindByID(t *testing.T) {
 		exec.sql.ExpectQuery(`SELECT id, symptom, diagnosis, therapy, result, updated_at FROM medical_records WHERE id = \$1 LIMIT 1`).
 			WillReturnRows(sqlmock.
 				NewRows([]string{"id", "symptom", "diagnosis", "therapy", "result", "updated_at"}).
-				AddRow(1, "Symptom", "Diagnosis", "Therapy", "Result", time.Now()).
-				AddRow(2, "Symptom", "Diagnosis", "Therapy", "Result", "time.Now()"),
+				AddRow(1, "Symptom", "Diagnosis", "Therapy", "Result", "time.Now()"),
 			)
 
 		res, err := exec.repo.FindByID(context.Background(), uint64(1))
 
-		assert.Nil(t, err)
-		assert.NotEmpty(t, res)
-		assert.Equal(t, 1, len(res))
+		assert.NotNil(t, err)
+		assert.Nil(t, res)
 	})
 
-	t.Run("successfully retrieve all rows", func(t *testing.T) {
+	t.Run("successfully retrieve one medical record", func(t *testing.T) {
 		exec := createMedicalRecordSelectorExecutor()
 
 		exec.sql.ExpectQuery(`SELECT id, symptom, diagnosis, therapy, result, updated_at FROM medical_records WHERE id = \$1 LIMIT 1`).
 			WillReturnRows(sqlmock.
 				NewRows([]string{"id", "symptom", "diagnosis", "therapy", "result", "updated_at"}).
-				AddRow(1, "Symptom", "Diagnosis", "Therapy", "Result", time.Now()).
-				AddRow(2, "Symptom", "Diagnosis", "Therapy", "Result", time.Now()),
+				AddRow(1, "Symptom", "Diagnosis", "Therapy", "Result", time.Now()),
 			)
 
 		res, err := exec.repo.FindByID(context.Background(), uint64(1))
 
 		assert.Nil(t, err)
-		assert.NotEmpty(t, res)
-		assert.Equal(t, 2, len(res))
+		assert.NotNil(t, res)
+		assert.Equal(t, uint64(1), uint64(res.ID))
 	})
 }
 
