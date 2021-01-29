@@ -43,6 +43,21 @@ func NewMedicalRecordFinder(selector MedicalRecordSelector) *MedicalRecordFinder
 	}
 }
 
+// FindByID finds all medical records by its ID and validated by user's email.
+// Only medical record that is owned by the right user's email can be retrieved.
+// If the medical record is not owned by the user, it will return ErrUnauthorized.
+func (mf *MedicalRecordFinder) FindByID(ctx context.Context, id uint64, email string) (*entity.MedicalRecord, *entity.Error) {
+	mr, err := mf.selector.FindByID(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	if mr.User.Email != email {
+		return nil, entity.ErrUnauthorized
+	}
+	return mr, nil
+}
+
 // FindByEmail finds medical records that belong to specific user (based on email).
 // The email will be verified first using regex and LookupMX.
 func (mf *MedicalRecordFinder) FindByEmail(ctx context.Context, email string) ([]*entity.MedicalRecord, *entity.Error) {
