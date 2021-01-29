@@ -2,12 +2,27 @@ package handler
 
 import (
 	"net/http"
+	"time"
 
+	"github.com/indrasaputra/hashids"
 	"github.com/labstack/echo/v4"
 	"github.com/orvosi/api/entity"
 	"github.com/orvosi/api/internal/http/response"
 	"github.com/orvosi/api/usecase"
 )
+
+// MedicalRecordResponse defines the JSON response of medical record.
+type MedicalRecordResponse struct {
+	ID        hashids.ID `json:"id"`
+	Symptom   string     `json:"symptom"`
+	Diagnosis string     `json:"diagnosis"`
+	Therapy   string     `json:"therapy"`
+	Result    string     `json:"result"`
+	CreatedBy string     `json:"created_by"`
+	CreatedAt time.Time  `json:"created_at"`
+	UpdatedBy string     `json:"updated_by"`
+	UpdatedAt time.Time  `json:"updated_at"`
+}
 
 // MedicalRecordFinder handles HTTP request and response
 // for find medical record.
@@ -33,7 +48,7 @@ func (mf *MedicalRecordFinder) FindByEmail(ctx echo.Context) error {
 		return err
 	}
 
-	res, ferr := mf.finder.FindByEmail(ctx.Request().Context(), user.Email)
+	mrs, ferr := mf.finder.FindByEmail(ctx.Request().Context(), user.Email)
 	if ferr != nil {
 		resp := response.NewError(ferr)
 		status := http.StatusInternalServerError
@@ -44,6 +59,29 @@ func (mf *MedicalRecordFinder) FindByEmail(ctx echo.Context) error {
 		return ferr
 	}
 
+	res := createMedicalRecordResponses(mrs)
 	ctx.JSON(http.StatusOK, response.NewSuccess(res, response.EmptyMeta{}))
 	return nil
+}
+
+func createMedicalRecordResponses(mrs []*entity.MedicalRecord) []*MedicalRecordResponse {
+	var res []*MedicalRecordResponse
+	for _, mr := range mrs {
+		res = append(res, createMedicalRecordResponse(mr))
+	}
+	return res
+}
+
+func createMedicalRecordResponse(mr *entity.MedicalRecord) *MedicalRecordResponse {
+	return &MedicalRecordResponse{
+		ID:        mr.ID,
+		Symptom:   mr.Symptom,
+		Diagnosis: mr.Diagnosis,
+		Therapy:   mr.Therapy,
+		Result:    mr.Result,
+		CreatedBy: mr.CreatedBy,
+		CreatedAt: mr.CreatedAt,
+		UpdatedBy: mr.UpdatedBy,
+		UpdatedAt: mr.UpdatedAt,
+	}
 }
