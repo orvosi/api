@@ -29,7 +29,7 @@ func TestMedicalRecordSelector_FindByID(t *testing.T) {
 	t.Run("select query returns error", func(t *testing.T) {
 		exec := createMedicalRecordSelectorExecutor()
 
-		exec.sql.ExpectQuery(`SELECT id, symptom, diagnosis, therapy, result, updated_at FROM medical_records WHERE id = \$1 LIMIT 1`).
+		exec.sql.ExpectQuery(`SELECT id, symptom, diagnosis, therapy, result, updated_at, email FROM medical_records WHERE id = \$1 LIMIT 1`).
 			WillReturnError(errors.New("fail to select from database"))
 
 		res, err := exec.repo.FindByID(context.Background(), uint64(1))
@@ -42,10 +42,10 @@ func TestMedicalRecordSelector_FindByID(t *testing.T) {
 	t.Run("row scan returns error", func(t *testing.T) {
 		exec := createMedicalRecordSelectorExecutor()
 
-		exec.sql.ExpectQuery(`SELECT id, symptom, diagnosis, therapy, result, updated_at FROM medical_records WHERE id = \$1 LIMIT 1`).
+		exec.sql.ExpectQuery(`SELECT id, symptom, diagnosis, therapy, result, updated_at, email FROM medical_records WHERE id = \$1 LIMIT 1`).
 			WillReturnRows(sqlmock.
-				NewRows([]string{"id", "symptom", "diagnosis", "therapy", "result", "updated_at"}).
-				AddRow(1, "Symptom", "Diagnosis", "Therapy", "Result", "time.Now()"),
+				NewRows([]string{"id", "symptom", "diagnosis", "therapy", "result", "updated_at", "email"}).
+				AddRow(1, "Symptom", "Diagnosis", "Therapy", "Result", "time.Now()", "dummy@dummy.com"),
 			)
 
 		res, err := exec.repo.FindByID(context.Background(), uint64(1))
@@ -57,10 +57,10 @@ func TestMedicalRecordSelector_FindByID(t *testing.T) {
 	t.Run("successfully retrieve one medical record", func(t *testing.T) {
 		exec := createMedicalRecordSelectorExecutor()
 
-		exec.sql.ExpectQuery(`SELECT id, symptom, diagnosis, therapy, result, updated_at FROM medical_records WHERE id = \$1 LIMIT 1`).
+		exec.sql.ExpectQuery(`SELECT id, symptom, diagnosis, therapy, result, updated_at, email FROM medical_records WHERE id = \$1 LIMIT 1`).
 			WillReturnRows(sqlmock.
-				NewRows([]string{"id", "symptom", "diagnosis", "therapy", "result", "updated_at"}).
-				AddRow(1, "Symptom", "Diagnosis", "Therapy", "Result", time.Now()),
+				NewRows([]string{"id", "symptom", "diagnosis", "therapy", "result", "updated_at", "email"}).
+				AddRow(1, "Symptom", "Diagnosis", "Therapy", "Result", time.Now(), "dummy@dummy.com"),
 			)
 
 		res, err := exec.repo.FindByID(context.Background(), uint64(1))
