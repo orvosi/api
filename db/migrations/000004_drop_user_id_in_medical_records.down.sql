@@ -1,0 +1,6 @@
+BEGIN;
+
+ALTER TABLE medical_records
+ADD COLUMN user_id BIGINT NOT NULL;
+
+COMMIT;
