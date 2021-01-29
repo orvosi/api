@@ -1,0 +1,6 @@
+BEGIN;
+
+ALTER TABLE medical_records
+ADD COLUMN email VARCHAR(255) UNIQUE NOT NULL;
+
+COMMIT;
