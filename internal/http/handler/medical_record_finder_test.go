@@ -103,7 +103,7 @@ func TestMedicalRecordFinder_FindByEmail(t *testing.T) {
 		exec.handler.FindByEmail(ctx)
 
 		assert.Equal(t, http.StatusOK, rec.Code)
-		str := fmt.Sprintf("%s\n", `{"data":[{"id":"oWx0b8DZ1a","user":{"id":"oWx0b8DZ1a","email":"user@dummy.com","name":"User Dummy","google_id":"1234567890","created_at":"","updated_at":"","created_by":"0001-01-01T00:00:00Z","updated_by":"0001-01-01T00:00:00Z"},"symptom":"Symptom","diagnosis":"Diagnosis","therapy":"Therapy","result":"Result","created_at":"user@dummy.com","updated_at":"user@dummy.com","created_by":"2021-01-28T15:00:00Z","updated_by":"2021-01-28T15:00:00Z"}],"meta":{}}`)
+		str := fmt.Sprintf("%s\n", `{"data":[{"id":"oWx0b8DZ1a","symptom":"Symptom","diagnosis":"Diagnosis","therapy":"Therapy","result":"Result","created_by":"user@dummy.com","created_at":"2021-01-28T15:00:00Z","updated_by":"user@dummy.com","updated_at":"2021-01-28T15:00:00Z"}],"meta":{}}`)
 		assert.Equal(t, str, rec.Body.String())
 	})
 }
