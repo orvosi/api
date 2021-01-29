@@ -40,6 +40,16 @@ func TestMedicalRecordFinder_FindByID(t *testing.T) {
 		assert.Equal(t, entity.ErrInternalServer, err)
 		assert.Nil(t, res)
 	})
+
+	t.Run("successfully find medical records bounded to specific email", func(t *testing.T) {
+		exec := createMedicalRecordFinderExecutor(ctrl)
+
+		exec.selector.EXPECT().FindByID(context.Background(), uint64(1)).Return(&entity.MedicalRecord{User: &entity.User{Email: "dummy@dummy.com"}}, nil)
+		res, err := exec.usecase.FindByID(context.Background(), uint64(1), "dummy@dummy.com")
+
+		assert.Nil(t, err)
+		assert.NotNil(t, res)
+	})
 }
 
 func TestMedicalRecordFinder_FindByEmail(t *testing.T) {
