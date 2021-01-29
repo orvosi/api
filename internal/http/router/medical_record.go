@@ -19,3 +19,17 @@ func MedicalRecordCreator(h *handler.MedicalRecordCreator) []*Route {
 	routes = append(routes, r)
 	return routes
 }
+
+// MedicalRecordFinder creates routes for medical record finder.
+func MedicalRecordFinder(h *handler.MedicalRecordFinder) []*Route {
+	var routes []*Route
+
+	r := &Route{
+		Method:  http.MethodGet,
+		Path:    "/medical-records",
+		Handler: h.FindByEmail,
+	}
+
+	routes = append(routes, r)
+	return routes
+}
