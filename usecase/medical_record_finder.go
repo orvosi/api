@@ -14,6 +14,10 @@ var emailRegex = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z
 // FindMedicalRecord defines the business logic
 // to find a medical record.
 type FindMedicalRecord interface {
+	// FindByID finds all medical records by its ID and validated by user's email.
+	// Only medical record that is owned by the right user's email can be retrieved.
+	// If the medical record is not owned by the user, it will return ErrUnauthorized.
+	FindByID(ctx context.Context, id uint64, email string) (*entity.MedicalRecord, *entity.Error)
 	// FindByEmail finds medical records that belong to specific user (based on email).
 	FindByEmail(ctx context.Context, email string) ([]*entity.MedicalRecord, *entity.Error)
 }
@@ -21,6 +25,8 @@ type FindMedicalRecord interface {
 // MedicalRecordSelector defines the business logic
 // to select or find medical record data from storage.
 type MedicalRecordSelector interface {
+	// FindByID finds medical records by its id.
+	FindByID(ctx context.Context, id uint64) (*entity.MedicalRecord, *entity.Error)
 	// FindByEmail finds all medical records bounded to specific email.
 	FindByEmail(ctx context.Context, email string) ([]*entity.MedicalRecord, *entity.Error)
 }
