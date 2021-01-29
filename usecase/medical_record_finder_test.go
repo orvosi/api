@@ -41,6 +41,17 @@ func TestMedicalRecordFinder_FindByID(t *testing.T) {
 		assert.Nil(t, res)
 	})
 
+	t.Run("medical record is not owned by the user", func(t *testing.T) {
+		exec := createMedicalRecordFinderExecutor(ctrl)
+
+		exec.selector.EXPECT().FindByID(context.Background(), uint64(1)).Return(&entity.MedicalRecord{User: &entity.User{Email: "notdummy@dummy.com"}}, nil)
+		res, err := exec.usecase.FindByID(context.Background(), uint64(1), "dummy@dummy.com")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, entity.ErrUnauthorized, err)
+		assert.Nil(t, res)
+	})
+
 	t.Run("successfully find medical records bounded to specific email", func(t *testing.T) {
 		exec := createMedicalRecordFinderExecutor(ctrl)
 
