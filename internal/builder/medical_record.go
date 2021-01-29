@@ -18,3 +18,12 @@ func BuildMedicalRecordCreator(cfg *config.Config, db *sql.DB) []*router.Route {
 	hdr := handler.NewMedicalRecordCreator(uc)
 	return router.MedicalRecordCreator(hdr)
 }
+
+// BuildMedicalRecordFinder builds medical record find workflow
+// starting from handler down to repository.
+func BuildMedicalRecordFinder(cfg *config.Config, db *sql.DB) []*router.Route {
+	sel := repository.NewMedicalRecordSelector(db)
+	uc := usecase.NewMedicalRecordFinder(sel)
+	hdr := handler.NewMedicalRecordFinder(uc)
+	return router.MedicalRecordFinder(hdr)
+}
