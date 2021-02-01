@@ -14,27 +14,27 @@ type CreateMedicalRecord interface {
 	Create(ctx context.Context, record *entity.MedicalRecord) *entity.Error
 }
 
-// MedicalRecordInserter defines the business logic
-// to insert a medical record into a storage.
-type MedicalRecordInserter interface {
-	// Insert inserts the medical record into the storage.
+// InsertMedicalRecordRepository defines the business logic
+// to insert a medical record into a repository.
+type InsertMedicalRecordRepository interface {
+	// Insert inserts the medical record into the repository.
 	// This operation MUST set the inserted ID back to the medical record object.
 	Insert(ctx context.Context, record *entity.MedicalRecord) *entity.Error
 }
 
 // MedicalRecordCreator responsibles for medical record creation workflow.
 type MedicalRecordCreator struct {
-	inserter MedicalRecordInserter
+	inserter InsertMedicalRecordRepository
 }
 
 // NewMedicalRecordCreator creates an instance of MedicalRecordCreator.
-func NewMedicalRecordCreator(inserter MedicalRecordInserter) *MedicalRecordCreator {
+func NewMedicalRecordCreator(inserter InsertMedicalRecordRepository) *MedicalRecordCreator {
 	return &MedicalRecordCreator{
 		inserter: inserter,
 	}
 }
 
-// Create creates a new medical record and persist it into a storage.s
+// Create creates a new medical record and persist it into a repository
 func (mrc *MedicalRecordCreator) Create(ctx context.Context, record *entity.MedicalRecord) *entity.Error {
 	if err := validateMedicalRecord(record); err != nil {
 		return err
