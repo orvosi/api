@@ -36,5 +36,13 @@ func NewMedicalRecordUpdater(repo UpdateMedicalRecordRepository) *MedicalRecordU
 
 // Update updates the medical record.
 func (mu *MedicalRecordUpdater) Update(ctx context.Context, id uint64, record *entity.MedicalRecord, email string) *entity.Error {
-	return nil
+	found, err := mu.repo.DoesRecordExist(ctx, id, email)
+	if err != nil {
+		return err
+	}
+	if !found {
+		return entity.ErrMedicalRecordNotFound
+	}
+
+	return mu.repo.Update(ctx, id, record)
 }
