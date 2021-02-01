@@ -36,7 +36,7 @@ func TestMedicalRecordUpater_Update(t *testing.T) {
 		record := createValidMedicalRecord()
 		exec.repo.EXPECT().DoesRecordExist(context.Background(), uint64(1), "dummy@dummy.com").Return(false, entity.ErrInternalServer)
 
-		err := exec.usecase.Update(context.Background(), uint64(1), record, "dummy@dummy.com")
+		err := exec.usecase.Update(context.Background(), "dummy@dummy.com", uint64(1), record)
 
 		assert.NotNil(t, err)
 		assert.Equal(t, entity.ErrInternalServer, err)
@@ -48,7 +48,7 @@ func TestMedicalRecordUpater_Update(t *testing.T) {
 		record := createValidMedicalRecord()
 		exec.repo.EXPECT().DoesRecordExist(context.Background(), uint64(1), "dummy@dummy.com").Return(false, nil)
 
-		err := exec.usecase.Update(context.Background(), uint64(1), record, "dummy@dummy.com")
+		err := exec.usecase.Update(context.Background(), "dummy@dummy.com", uint64(1), record)
 
 		assert.NotNil(t, err)
 		assert.Equal(t, entity.ErrMedicalRecordNotFound, err)
@@ -61,7 +61,7 @@ func TestMedicalRecordUpater_Update(t *testing.T) {
 		exec.repo.EXPECT().DoesRecordExist(context.Background(), uint64(1), "dummy@dummy.com").Return(true, nil)
 		exec.repo.EXPECT().Update(context.Background(), uint64(1), record).Return(entity.ErrInternalServer)
 
-		err := exec.usecase.Update(context.Background(), uint64(1), record, "dummy@dummy.com")
+		err := exec.usecase.Update(context.Background(), "dummy@dummy.com", uint64(1), record)
 
 		assert.NotNil(t, err)
 		assert.Equal(t, entity.ErrInternalServer, err)
@@ -74,7 +74,7 @@ func TestMedicalRecordUpater_Update(t *testing.T) {
 		exec.repo.EXPECT().DoesRecordExist(context.Background(), uint64(1), "dummy@dummy.com").Return(true, nil)
 		exec.repo.EXPECT().Update(context.Background(), uint64(1), record).Return(nil)
 
-		err := exec.usecase.Update(context.Background(), uint64(1), record, "dummy@dummy.com")
+		err := exec.usecase.Update(context.Background(), "dummy@dummy.com", uint64(1), record)
 
 		assert.Nil(t, err)
 	})
