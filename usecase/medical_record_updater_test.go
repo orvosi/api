@@ -1,9 +1,11 @@
 package usecase_test
 
 import (
+	"context"
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/orvosi/api/entity"
 	mock_usecase "github.com/orvosi/api/test/mock/usecase"
 	"github.com/orvosi/api/usecase"
 	"github.com/stretchr/testify/assert"
@@ -21,6 +23,23 @@ func TestNewMedicalRecordUpdater(t *testing.T) {
 	t.Run("successfully create an instance of MedicalRecordUpdater", func(t *testing.T) {
 		exec := createMedicalRecordUpdaterExecutor(ctrl)
 		assert.NotNil(t, exec.usecase)
+	})
+}
+
+func TestMedicalRecordUpater_Update(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	t.Run("repository returns error", func(t *testing.T) {
+		exec := createMedicalRecordUpdaterExecutor(ctrl)
+
+		record := createValidMedicalRecord()
+		exec.repo.EXPECT().DoesRecordExist(context.Background(), uint64(1), "dummy@dummy.com").Return(false, entity.ErrInternalServer)
+
+		err := exec.usecase.Update(context.Background(), uint64(1), record, "dummy@dummy.com")
+
+		assert.NotNil(t, err)
+		assert.Equal(t, entity.ErrInternalServer, err)
 	})
 }
 
