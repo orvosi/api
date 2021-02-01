@@ -119,6 +119,30 @@ func TestMedicalRecordUpdater_Update(t *testing.T) {
 		str := fmt.Sprintf("%s\n", `{"errors":[{"code":"02-005","message":"Medical record not found"}],"meta":null}`)
 		assert.Equal(t, str, rec.Body.String())
 	})
+
+	t.Run("update usecase returns 5xx", func(t *testing.T) {
+		mr := createValidUpdateMedicalRecordRequest()
+		body, _ := json.Marshal(mr)
+		req := httptest.NewRequest(http.MethodPut, "/", bytes.NewBuffer(body))
+		req.Header.Set("Content-Type", echo.MIMEApplicationJSON)
+		user := createUserInformation()
+		req = req.WithContext(context.WithValue(context.Background(), middleware.ContextKeyUser, user))
+
+		rec := httptest.NewRecorder()
+		e := echo.New()
+		ctx := e.NewContext(req, rec)
+		ctx.SetPath("/medical-records/:id")
+		ctx.SetParamNames("id")
+		ctx.SetParamValues("oWx0b8DZ1a")
+
+		exec := createMedicalRecordUpdaterExecutor(ctrl)
+		exec.usecase.EXPECT().Update(ctx.Request().Context(), uint64(1), createMedicalRecordFromUpdateRequest(mr, user)).Return(entity.ErrInternalServer)
+		exec.handler.Update(ctx)
+
+		assert.Equal(t, http.StatusInternalServerError, rec.Code)
+		str := fmt.Sprintf("%s\n", `{"errors":[{"code":"01-001","message":"Internal server error"}],"meta":null}`)
+		assert.Equal(t, str, rec.Body.String())
+	})
 }
 
 func createValidUpdateMedicalRecordRequest() *handler.UpdateMedicalRecordRequest {
