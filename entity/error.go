@@ -26,6 +26,8 @@ var (
 	// The validation is run using regex "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$"
 	// and LookupMX from net package.
 	ErrInvalidEmail = NewError("02-004", "Email is invalid. Please, check the email")
+	// ErrMedicalRecordNotFound indicates that the medical record can't be found.
+	ErrMedicalRecordNotFound = NewError("02-005", "Medical record not found")
 )
 
 // Error represents a data structure for error.
