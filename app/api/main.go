@@ -31,8 +31,9 @@ func main() {
 
 	medRecCreator := builder.BuildMedicalRecordCreator(cfg, db)
 	medRecFinder := builder.BuildMedicalRecordFinder(cfg, db)
+	medRecUpdater := builder.BuildMedicalRecordUpdater(cfg, db)
 
-	srv := server.NewServer(jwtMidd, append(medRecCreator, medRecFinder...))
+	srv := server.NewServer(jwtMidd, append(append(medRecCreator, medRecFinder...), medRecUpdater...))
 	runServer(srv, cfg.Port)
 	waitForShutdown(srv)
 }
