@@ -66,6 +66,18 @@ func TestMedicalRecordUpater_Update(t *testing.T) {
 		assert.NotNil(t, err)
 		assert.Equal(t, entity.ErrInternalServer, err)
 	})
+
+	t.Run("successfully update medical record", func(t *testing.T) {
+		exec := createMedicalRecordUpdaterExecutor(ctrl)
+
+		record := createValidMedicalRecord()
+		exec.repo.EXPECT().DoesRecordExist(context.Background(), uint64(1), "dummy@dummy.com").Return(true, nil)
+		exec.repo.EXPECT().Update(context.Background(), uint64(1), record).Return(nil)
+
+		err := exec.usecase.Update(context.Background(), uint64(1), record, "dummy@dummy.com")
+
+		assert.Nil(t, err)
+	})
 }
 
 func createMedicalRecordUpdaterExecutor(ctrl *gomock.Controller) *MedicalRecordUpdater_Executor {
