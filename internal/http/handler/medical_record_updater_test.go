@@ -112,7 +112,7 @@ func TestMedicalRecordUpdater_Update(t *testing.T) {
 		ctx.SetParamValues("oWx0b8DZ1a")
 
 		exec := createMedicalRecordUpdaterExecutor(ctrl)
-		exec.usecase.EXPECT().Update(ctx.Request().Context(), uint64(1), createMedicalRecordFromUpdateRequest(mr, user)).Return(entity.ErrMedicalRecordNotFound)
+		exec.usecase.EXPECT().Update(ctx.Request().Context(), user.Email, uint64(1), createMedicalRecordFromUpdateRequest(mr, user)).Return(entity.ErrMedicalRecordNotFound)
 		exec.handler.Update(ctx)
 
 		assert.Equal(t, http.StatusNotFound, rec.Code)
@@ -136,7 +136,7 @@ func TestMedicalRecordUpdater_Update(t *testing.T) {
 		ctx.SetParamValues("oWx0b8DZ1a")
 
 		exec := createMedicalRecordUpdaterExecutor(ctrl)
-		exec.usecase.EXPECT().Update(ctx.Request().Context(), uint64(1), createMedicalRecordFromUpdateRequest(mr, user)).Return(entity.ErrInternalServer)
+		exec.usecase.EXPECT().Update(ctx.Request().Context(), user.Email, uint64(1), createMedicalRecordFromUpdateRequest(mr, user)).Return(entity.ErrInternalServer)
 		exec.handler.Update(ctx)
 
 		assert.Equal(t, http.StatusInternalServerError, rec.Code)
@@ -160,7 +160,7 @@ func TestMedicalRecordUpdater_Update(t *testing.T) {
 		ctx.SetParamValues("oWx0b8DZ1a")
 
 		exec := createMedicalRecordUpdaterExecutor(ctrl)
-		exec.usecase.EXPECT().Update(ctx.Request().Context(), uint64(1), createMedicalRecordFromUpdateRequest(mr, user)).Return(nil)
+		exec.usecase.EXPECT().Update(ctx.Request().Context(), user.Email, uint64(1), createMedicalRecordFromUpdateRequest(mr, user)).Return(nil)
 		exec.handler.Update(ctx)
 
 		assert.Equal(t, http.StatusOK, rec.Code)

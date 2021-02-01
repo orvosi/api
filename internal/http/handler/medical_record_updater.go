@@ -56,7 +56,7 @@ func (mru *MedicalRecordUpdater) Update(ctx echo.Context) error {
 	}
 
 	record := createMedicalRecordFromUpdateRequest(&request, user)
-	if err := mru.updater.Update(ctx.Request().Context(), uint64(id), record); err != nil {
+	if err := mru.updater.Update(ctx.Request().Context(), user.Email, uint64(id), record); err != nil {
 		res := response.NewError(err)
 		status := http.StatusNotFound
 		if err.Code == entity.ErrInternalServer.Code {
