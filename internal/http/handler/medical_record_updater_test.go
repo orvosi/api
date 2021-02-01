@@ -49,6 +49,24 @@ func TestMedicalRecordUpdater_Update(t *testing.T) {
 		str := fmt.Sprintf("%s\n", `{"errors":[{"code":"01-004","message":"Entity ID is invalid"}],"meta":null}`)
 		assert.Equal(t, str, rec.Body.String())
 	})
+
+	t.Run("can't extract user information from request context", func(t *testing.T) {
+		req := httptest.NewRequest(http.MethodPut, "/", nil)
+
+		rec := httptest.NewRecorder()
+		e := echo.New()
+		ctx := e.NewContext(req, rec)
+		ctx.SetPath("/medical-records/:id")
+		ctx.SetParamNames("id")
+		ctx.SetParamValues("oWx0b8DZ1a")
+
+		exec := createMedicalRecordUpdaterExecutor(ctrl)
+		exec.handler.Update(ctx)
+
+		assert.Equal(t, http.StatusInternalServerError, rec.Code)
+		str := fmt.Sprintf("%s\n", `{"errors":[{"code":"01-001","message":"Internal server error"}],"meta":null}`)
+		assert.Equal(t, str, rec.Body.String())
+	})
 }
 
 func createMedicalRecordUpdaterExecutor(ctrl *gomock.Controller) *MedicalRecordUpdater_Executor {
