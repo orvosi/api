@@ -24,13 +24,19 @@ func MedicalRecordCreator(h *handler.MedicalRecordCreator) []*Route {
 func MedicalRecordFinder(h *handler.MedicalRecordFinder) []*Route {
 	var routes []*Route
 
-	r := &Route{
+	fbe := &Route{
 		Method:  http.MethodGet,
 		Path:    "/medical-records",
 		Handler: h.FindByEmail,
 	}
 
-	routes = append(routes, r)
+	fbi := &Route{
+		Method:  http.MethodGet,
+		Path:    "/medical-records/:id",
+		Handler: h.FindByID,
+	}
+
+	routes = append(routes, fbe, fbi)
 	return routes
 }
 
