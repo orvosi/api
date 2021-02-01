@@ -24,13 +24,13 @@ type InsertMedicalRecordRepository interface {
 
 // MedicalRecordCreator responsibles for medical record creation workflow.
 type MedicalRecordCreator struct {
-	inserter InsertMedicalRecordRepository
+	repo InsertMedicalRecordRepository
 }
 
 // NewMedicalRecordCreator creates an instance of MedicalRecordCreator.
-func NewMedicalRecordCreator(inserter InsertMedicalRecordRepository) *MedicalRecordCreator {
+func NewMedicalRecordCreator(repo InsertMedicalRecordRepository) *MedicalRecordCreator {
 	return &MedicalRecordCreator{
-		inserter: inserter,
+		repo: repo,
 	}
 }
 
@@ -40,7 +40,7 @@ func (mrc *MedicalRecordCreator) Create(ctx context.Context, record *entity.Medi
 		return err
 	}
 
-	return mrc.inserter.Insert(ctx, record)
+	return mrc.repo.Insert(ctx, record)
 }
 
 func validateMedicalRecord(record *entity.MedicalRecord) *entity.Error {
