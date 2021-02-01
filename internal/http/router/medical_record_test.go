@@ -34,7 +34,8 @@ func TestMedicalRecordFinderRoutes(t *testing.T) {
 
 	t.Run("all desired medical record finder routes are registered", func(t *testing.T) {
 		desired := map[string]string{
-			"/medical-records": "GET",
+			"/medical-records":     "GET",
+			"/medical-records/:id": "GET",
 		}
 
 		h := createMedicalRecordFinder(ctrl)
