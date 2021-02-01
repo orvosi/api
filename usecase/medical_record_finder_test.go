@@ -12,8 +12,8 @@ import (
 )
 
 type MedicalRecordFinder_Executor struct {
-	usecase  *usecase.MedicalRecordFinder
-	selector *mock_usecase.MockMedicalRecordSelector
+	usecase *usecase.MedicalRecordFinder
+	repo    *mock_usecase.MockFindMedicalRecordRepository
 }
 
 func TestNewMedicalRecordFinder(t *testing.T) {
@@ -30,10 +30,10 @@ func TestMedicalRecordFinder_FindByID(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	t.Run("selector returns error", func(t *testing.T) {
+	t.Run("repo returns error", func(t *testing.T) {
 		exec := createMedicalRecordFinderExecutor(ctrl)
 
-		exec.selector.EXPECT().FindByID(context.Background(), uint64(1)).Return(&entity.MedicalRecord{}, entity.ErrInternalServer)
+		exec.repo.EXPECT().FindByID(context.Background(), uint64(1)).Return(&entity.MedicalRecord{}, entity.ErrInternalServer)
 		res, err := exec.usecase.FindByID(context.Background(), uint64(1), "dummy@dummy.com")
 
 		assert.NotNil(t, err)
@@ -44,7 +44,7 @@ func TestMedicalRecordFinder_FindByID(t *testing.T) {
 	t.Run("medical record is not owned by the user", func(t *testing.T) {
 		exec := createMedicalRecordFinderExecutor(ctrl)
 
-		exec.selector.EXPECT().FindByID(context.Background(), uint64(1)).Return(&entity.MedicalRecord{User: &entity.User{Email: "notdummy@dummy.com"}}, nil)
+		exec.repo.EXPECT().FindByID(context.Background(), uint64(1)).Return(&entity.MedicalRecord{User: &entity.User{Email: "notdummy@dummy.com"}}, nil)
 		res, err := exec.usecase.FindByID(context.Background(), uint64(1), "dummy@dummy.com")
 
 		assert.NotNil(t, err)
@@ -55,7 +55,7 @@ func TestMedicalRecordFinder_FindByID(t *testing.T) {
 	t.Run("successfully find medical records bounded to specific email", func(t *testing.T) {
 		exec := createMedicalRecordFinderExecutor(ctrl)
 
-		exec.selector.EXPECT().FindByID(context.Background(), uint64(1)).Return(&entity.MedicalRecord{User: &entity.User{Email: "dummy@dummy.com"}}, nil)
+		exec.repo.EXPECT().FindByID(context.Background(), uint64(1)).Return(&entity.MedicalRecord{User: &entity.User{Email: "dummy@dummy.com"}}, nil)
 		res, err := exec.usecase.FindByID(context.Background(), uint64(1), "dummy@dummy.com")
 
 		assert.Nil(t, err)
@@ -97,10 +97,10 @@ func TestMedicalRecordFinder_FindByEmail(t *testing.T) {
 		assert.Empty(t, res)
 	})
 
-	t.Run("selector returns error", func(t *testing.T) {
+	t.Run("repo returns error", func(t *testing.T) {
 		exec := createMedicalRecordFinderExecutor(ctrl)
 
-		exec.selector.EXPECT().FindByEmail(context.Background(), "dummy@dummy.com").Return([]*entity.MedicalRecord{}, entity.ErrInternalServer)
+		exec.repo.EXPECT().FindByEmail(context.Background(), "dummy@dummy.com").Return([]*entity.MedicalRecord{}, entity.ErrInternalServer)
 		res, err := exec.usecase.FindByEmail(context.Background(), "dummy@dummy.com")
 
 		assert.NotNil(t, err)
@@ -111,7 +111,7 @@ func TestMedicalRecordFinder_FindByEmail(t *testing.T) {
 	t.Run("successfully find medical records bounded to specific email", func(t *testing.T) {
 		exec := createMedicalRecordFinderExecutor(ctrl)
 
-		exec.selector.EXPECT().FindByEmail(context.Background(), "dummy@dummy.com").Return([]*entity.MedicalRecord{&entity.MedicalRecord{}}, nil)
+		exec.repo.EXPECT().FindByEmail(context.Background(), "dummy@dummy.com").Return([]*entity.MedicalRecord{&entity.MedicalRecord{}}, nil)
 		res, err := exec.usecase.FindByEmail(context.Background(), "dummy@dummy.com")
 
 		assert.Nil(t, err)
@@ -121,11 +121,11 @@ func TestMedicalRecordFinder_FindByEmail(t *testing.T) {
 }
 
 func createMedicalRecordFinderExecutor(ctrl *gomock.Controller) *MedicalRecordFinder_Executor {
-	s := mock_usecase.NewMockMedicalRecordSelector(ctrl)
-	u := usecase.NewMedicalRecordFinder(s)
+	r := mock_usecase.NewMockFindMedicalRecordRepository(ctrl)
+	u := usecase.NewMedicalRecordFinder(r)
 
 	return &MedicalRecordFinder_Executor{
-		usecase:  u,
-		selector: s,
+		usecase: u,
+		repo:    r,
 	}
 }
