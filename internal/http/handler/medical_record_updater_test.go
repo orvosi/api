@@ -73,7 +73,10 @@ func TestMedicalRecordUpdater_Update(t *testing.T) {
 	})
 
 	t.Run("can't extract user information from request context", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodPut, "/", nil)
+		mr := createValidUpdateMedicalRecordRequest()
+		body, _ := json.Marshal(mr)
+		req := httptest.NewRequest(http.MethodPut, "/", bytes.NewBuffer(body))
+		req.Header.Set("Content-Type", echo.MIMEApplicationJSON)
 
 		rec := httptest.NewRecorder()
 		e := echo.New()
@@ -89,6 +92,15 @@ func TestMedicalRecordUpdater_Update(t *testing.T) {
 		str := fmt.Sprintf("%s\n", `{"errors":[{"code":"01-001","message":"Internal server error"}],"meta":null}`)
 		assert.Equal(t, str, rec.Body.String())
 	})
+}
+
+func createValidUpdateMedicalRecordRequest() *handler.UpdateMedicalRecordRequest {
+	return &handler.UpdateMedicalRecordRequest{
+		Symptom:   "symptom",
+		Diagnosis: "diagnosis",
+		Therapy:   "therapy",
+		Result:    "result",
+	}
 }
 
 func createMedicalRecordUpdaterExecutor(ctrl *gomock.Controller) *MedicalRecordUpdater_Executor {
