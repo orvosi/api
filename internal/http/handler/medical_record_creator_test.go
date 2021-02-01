@@ -86,7 +86,7 @@ func TestMedicalRecordCreator_Create(t *testing.T) {
 		ctx := e.NewContext(req, rec)
 
 		exec := createMedicalRecordCreatorExecutor(ctrl)
-		exec.usecase.EXPECT().Create(ctx.Request().Context(), createMedicalRecordFromRequest(mr, user)).Return(entity.ErrInvalidMedicalRecordAttribute)
+		exec.usecase.EXPECT().Create(ctx.Request().Context(), createMedicalRecordFromCreateRequest(mr, user)).Return(entity.ErrInvalidMedicalRecordAttribute)
 		exec.handler.Create(ctx)
 
 		assert.Equal(t, http.StatusBadRequest, rec.Code)
@@ -107,7 +107,7 @@ func TestMedicalRecordCreator_Create(t *testing.T) {
 		ctx := e.NewContext(req, rec)
 
 		exec := createMedicalRecordCreatorExecutor(ctrl)
-		exec.usecase.EXPECT().Create(ctx.Request().Context(), createMedicalRecordFromRequest(mr, user)).Return(entity.ErrInternalServer)
+		exec.usecase.EXPECT().Create(ctx.Request().Context(), createMedicalRecordFromCreateRequest(mr, user)).Return(entity.ErrInternalServer)
 		exec.handler.Create(ctx)
 
 		assert.Equal(t, http.StatusInternalServerError, rec.Code)
@@ -128,7 +128,7 @@ func TestMedicalRecordCreator_Create(t *testing.T) {
 		ctx := e.NewContext(req, rec)
 
 		exec := createMedicalRecordCreatorExecutor(ctrl)
-		exec.usecase.EXPECT().Create(ctx.Request().Context(), createMedicalRecordFromRequest(mr, user)).Return(nil)
+		exec.usecase.EXPECT().Create(ctx.Request().Context(), createMedicalRecordFromCreateRequest(mr, user)).Return(nil)
 		exec.handler.Create(ctx)
 
 		assert.Equal(t, http.StatusCreated, rec.Code)
@@ -154,7 +154,7 @@ func createUserInformation() *entity.User {
 	}
 }
 
-func createMedicalRecordFromRequest(req *handler.CreateMedicalRecordRequest, user *entity.User) *entity.MedicalRecord {
+func createMedicalRecordFromCreateRequest(req *handler.CreateMedicalRecordRequest, user *entity.User) *entity.MedicalRecord {
 	return &entity.MedicalRecord{
 		User:      user,
 		Symptom:   req.Symptom,
