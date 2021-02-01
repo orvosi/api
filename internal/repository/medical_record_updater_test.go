@@ -48,6 +48,20 @@ func TestMedicalRecordUpdater_DoesRecordExist(t *testing.T) {
 		assert.Nil(t, err)
 		assert.False(t, found)
 	})
+
+	t.Run("successfully found the record", func(t *testing.T) {
+		exec := createMedicalRecordUpdaterExecutor()
+
+		exec.sql.ExpectQuery(`SELECT id FROM medical_records WHERE id = \$1 AND email = \$2 LIMIT 1`).
+			WillReturnRows(sqlmock.
+				NewRows([]string{"id"}).
+				AddRow(999),
+			)
+		found, err := exec.repo.DoesRecordExist(context.Background(), uint64(1), "dummy@dummy.com")
+
+		assert.Nil(t, err)
+		assert.True(t, found)
+	})
 }
 
 func createMedicalRecordUpdaterExecutor() *MedicalRecordUpdater_Executor {
