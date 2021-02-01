@@ -47,7 +47,7 @@ func (mrc *MedicalRecordCreator) Create(ctx echo.Context) error {
 		return err
 	}
 
-	record := createMedicalRecordFromRequest(&request, user)
+	record := createMedicalRecordFromCreateRequest(&request, user)
 	if err := mrc.creator.Create(ctx.Request().Context(), record); err != nil {
 		res := response.NewError(err)
 		status := http.StatusInternalServerError
@@ -71,7 +71,7 @@ func extractUserFromRequestContext(ctx context.Context) (*entity.User, error) {
 	return user, nil
 }
 
-func createMedicalRecordFromRequest(req *CreateMedicalRecordRequest, user *entity.User) *entity.MedicalRecord {
+func createMedicalRecordFromCreateRequest(req *CreateMedicalRecordRequest, user *entity.User) *entity.MedicalRecord {
 	return &entity.MedicalRecord{
 		User:      user,
 		Symptom:   req.Symptom,
