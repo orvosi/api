@@ -24,11 +24,14 @@ type UpdateMedicalRecordRepository interface {
 
 // MedicalRecordUpdater responsibles for medical record update workflow.
 type MedicalRecordUpdater struct {
+	repo UpdateMedicalRecordRepository
 }
 
 // NewMedicalRecordUpdater creates an instance of MedicalRecordUpdater.
-func NewMedicalRecordUpdater() *MedicalRecordUpdater {
-	return &MedicalRecordUpdater{}
+func NewMedicalRecordUpdater(repo UpdateMedicalRecordRepository) *MedicalRecordUpdater {
+	return &MedicalRecordUpdater{
+		repo: repo,
+	}
 }
 
 // Update updates the medical record.
