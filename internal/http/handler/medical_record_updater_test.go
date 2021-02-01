@@ -2,6 +2,7 @@ package handler_test
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -10,7 +11,9 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/labstack/echo/v4"
+	"github.com/orvosi/api/entity"
 	"github.com/orvosi/api/internal/http/handler"
+	"github.com/orvosi/api/internal/http/middleware"
 	mock_usecase "github.com/orvosi/api/test/mock/usecase"
 	"github.com/stretchr/testify/assert"
 )
@@ -92,6 +95,30 @@ func TestMedicalRecordUpdater_Update(t *testing.T) {
 		str := fmt.Sprintf("%s\n", `{"errors":[{"code":"01-001","message":"Internal server error"}],"meta":null}`)
 		assert.Equal(t, str, rec.Body.String())
 	})
+
+	t.Run("wanted record not found", func(t *testing.T) {
+		mr := createValidUpdateMedicalRecordRequest()
+		body, _ := json.Marshal(mr)
+		req := httptest.NewRequest(http.MethodPut, "/", bytes.NewBuffer(body))
+		req.Header.Set("Content-Type", echo.MIMEApplicationJSON)
+		user := createUserInformation()
+		req = req.WithContext(context.WithValue(context.Background(), middleware.ContextKeyUser, user))
+
+		rec := httptest.NewRecorder()
+		e := echo.New()
+		ctx := e.NewContext(req, rec)
+		ctx.SetPath("/medical-records/:id")
+		ctx.SetParamNames("id")
+		ctx.SetParamValues("oWx0b8DZ1a")
+
+		exec := createMedicalRecordUpdaterExecutor(ctrl)
+		exec.usecase.EXPECT().Update(ctx.Request().Context(), uint64(1), createMedicalRecordFromUpdateRequest(mr, user)).Return(entity.ErrMedicalRecordNotFound)
+		exec.handler.Update(ctx)
+
+		assert.Equal(t, http.StatusNotFound, rec.Code)
+		str := fmt.Sprintf("%s\n", `{"errors":[{"code":"02-005","message":"Medical record not found"}],"meta":null}`)
+		assert.Equal(t, str, rec.Body.String())
+	})
 }
 
 func createValidUpdateMedicalRecordRequest() *handler.UpdateMedicalRecordRequest {
@@ -100,6 +127,16 @@ func createValidUpdateMedicalRecordRequest() *handler.UpdateMedicalRecordRequest
 		Diagnosis: "diagnosis",
 		Therapy:   "therapy",
 		Result:    "result",
+	}
+}
+
+func createMedicalRecordFromUpdateRequest(req *handler.UpdateMedicalRecordRequest, user *entity.User) *entity.MedicalRecord {
+	return &entity.MedicalRecord{
+		User:      user,
+		Symptom:   req.Symptom,
+		Diagnosis: req.Diagnosis,
+		Therapy:   req.Therapy,
+		Result:    req.Result,
 	}
 }
 
