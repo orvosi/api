@@ -64,6 +64,19 @@ func TestMedicalRecordUpdater_DoesRecordExist(t *testing.T) {
 	})
 }
 
+func TestMedicalRecordUpdater_Update(t *testing.T) {
+	t.Run("query returns internal error", func(t *testing.T) {
+		exec := createMedicalRecordUpdaterExecutor()
+
+		exec.sql.ExpectQuery(`UPDATE medical_records SET symptom = \$1, diagnosis = \$2, therapy = \$3, result = \$4, updated_at = \$5, updated_by = \$6 WHERE id = \$7`).
+			WillReturnError(errors.New("fail to select from database"))
+		err := exec.repo.Update(context.Background(), uint64(1), createValidMedicalRecord())
+
+		assert.NotNil(t, err)
+		assert.Equal(t, entity.ErrInternalServer, err)
+	})
+}
+
 func createMedicalRecordUpdaterExecutor() *MedicalRecordUpdater_Executor {
 	db, mock, err := sqlmock.New()
 	if err != nil {
