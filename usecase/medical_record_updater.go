@@ -10,7 +10,7 @@ import (
 // to update a medical record.
 type UpdateMedicalRecord interface {
 	// Update updates a new medical record.
-	Update(ctx context.Context, id uint64, record *entity.MedicalRecord) *entity.Error
+	Update(ctx context.Context, email string, id uint64, record *entity.MedicalRecord) *entity.Error
 }
 
 // UpdateMedicalRecordRepository defines the business logic
@@ -35,7 +35,7 @@ func NewMedicalRecordUpdater(repo UpdateMedicalRecordRepository) *MedicalRecordU
 }
 
 // Update updates the medical record.
-func (mu *MedicalRecordUpdater) Update(ctx context.Context, id uint64, record *entity.MedicalRecord, email string) *entity.Error {
+func (mu *MedicalRecordUpdater) Update(ctx context.Context, email string, id uint64, record *entity.MedicalRecord) *entity.Error {
 	found, err := mu.repo.DoesRecordExist(ctx, id, email)
 	if err != nil {
 		return err
