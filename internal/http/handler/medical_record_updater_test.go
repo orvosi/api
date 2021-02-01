@@ -1,6 +1,8 @@
 package handler_test
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -47,6 +49,26 @@ func TestMedicalRecordUpdater_Update(t *testing.T) {
 
 		assert.Equal(t, http.StatusInternalServerError, rec.Code)
 		str := fmt.Sprintf("%s\n", `{"errors":[{"code":"01-004","message":"Entity ID is invalid"}],"meta":null}`)
+		assert.Equal(t, str, rec.Body.String())
+	})
+
+	t.Run("can't process invalid medical record request", func(t *testing.T) {
+		body, _ := json.Marshal("invalid request body")
+		req := httptest.NewRequest(http.MethodPut, "/medical-records/:id", bytes.NewBuffer(body))
+		req.Header.Set("Content-Type", echo.MIMEApplicationJSON)
+
+		rec := httptest.NewRecorder()
+		e := echo.New()
+		ctx := e.NewContext(req, rec)
+		ctx.SetPath("/medical-records/:id")
+		ctx.SetParamNames("id")
+		ctx.SetParamValues("oWx0b8DZ1a")
+
+		exec := createMedicalRecordUpdaterExecutor(ctrl)
+		exec.handler.Update(ctx)
+
+		assert.Equal(t, http.StatusBadRequest, rec.Code)
+		str := fmt.Sprintf("%s\n", `{"errors":[{"code":"02-003","message":"Medical record request is invalid. Please, check the JSON request"}],"meta":null}`)
 		assert.Equal(t, str, rec.Body.String())
 	})
 
