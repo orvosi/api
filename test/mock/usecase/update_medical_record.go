@@ -36,15 +36,15 @@ func (m *MockUpdateMedicalRecord) EXPECT() *MockUpdateMedicalRecordMockRecorder 
 }
 
 // Update mocks base method
-func (m *MockUpdateMedicalRecord) Update(ctx context.Context, id uint64, record *entity.MedicalRecord) *entity.Error {
+func (m *MockUpdateMedicalRecord) Update(ctx context.Context, email string, id uint64, record *entity.MedicalRecord) *entity.Error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Update", ctx, id, record)
+	ret := m.ctrl.Call(m, "Update", ctx, email, id, record)
 	ret0, _ := ret[0].(*entity.Error)
 	return ret0
 }
 
 // Update indicates an expected call of Update
-func (mr *MockUpdateMedicalRecordMockRecorder) Update(ctx, id, record interface{}) *gomock.Call {
+func (mr *MockUpdateMedicalRecordMockRecorder) Update(ctx, email, id, record interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockUpdateMedicalRecord)(nil).Update), ctx, id, record)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockUpdateMedicalRecord)(nil).Update), ctx, email, id, record)
 }
