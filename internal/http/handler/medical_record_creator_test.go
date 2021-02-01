@@ -137,8 +137,8 @@ func TestMedicalRecordCreator_Create(t *testing.T) {
 	})
 }
 
-func createValidCreateMedicalRecordRequest() *handler.MedicalRecordRequest {
-	return &handler.MedicalRecordRequest{
+func createValidCreateMedicalRecordRequest() *handler.CreateMedicalRecordRequest {
+	return &handler.CreateMedicalRecordRequest{
 		Symptom:   "symptom",
 		Diagnosis: "diagnosis",
 		Therapy:   "therapy",
@@ -154,7 +154,7 @@ func createUserInformation() *entity.User {
 	}
 }
 
-func createMedicalRecordFromRequest(req *handler.MedicalRecordRequest, user *entity.User) *entity.MedicalRecord {
+func createMedicalRecordFromRequest(req *handler.CreateMedicalRecordRequest, user *entity.User) *entity.MedicalRecord {
 	return &entity.MedicalRecord{
 		User:      user,
 		Symptom:   req.Symptom,
