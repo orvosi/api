@@ -13,8 +13,8 @@ import (
 )
 
 type MedicalRecordCreator_Executor struct {
-	usecase  *usecase.MedicalRecordCreator
-	inserter *mock_usecase.MockMedicalRecordInserter
+	usecase *usecase.MedicalRecordCreator
+	repo    *mock_usecase.MockInsertMedicalRecordRepository
 }
 
 func TestNewMedicalRecordCreator(t *testing.T) {
@@ -84,11 +84,11 @@ func TestMedicalRecordCreator_Create(t *testing.T) {
 		assert.Equal(t, entity.ErrInvalidMedicalRecordAttribute, err)
 	})
 
-	t.Run("medical record inserter fails", func(t *testing.T) {
+	t.Run("medical record repo fails", func(t *testing.T) {
 		exec := createMedicalRecordCreatorExecutor(ctrl)
 		record := createValidMedicalRecord()
 
-		exec.inserter.EXPECT().Insert(context.Background(), record).Return(entity.ErrInternalServer)
+		exec.repo.EXPECT().Insert(context.Background(), record).Return(entity.ErrInternalServer)
 
 		err := exec.usecase.Create(context.Background(), record)
 
@@ -100,7 +100,7 @@ func TestMedicalRecordCreator_Create(t *testing.T) {
 		exec := createMedicalRecordCreatorExecutor(ctrl)
 		record := createValidMedicalRecord()
 
-		exec.inserter.EXPECT().Insert(context.Background(), record).Return(nil)
+		exec.repo.EXPECT().Insert(context.Background(), record).Return(nil)
 
 		err := exec.usecase.Create(context.Background(), record)
 
@@ -125,11 +125,11 @@ func createValidMedicalRecord() *entity.MedicalRecord {
 }
 
 func createMedicalRecordCreatorExecutor(ctrl *gomock.Controller) *MedicalRecordCreator_Executor {
-	i := mock_usecase.NewMockMedicalRecordInserter(ctrl)
-	u := usecase.NewMedicalRecordCreator(i)
+	r := mock_usecase.NewMockInsertMedicalRecordRepository(ctrl)
+	u := usecase.NewMedicalRecordCreator(r)
 
 	return &MedicalRecordCreator_Executor{
-		usecase:  u,
-		inserter: i,
+		usecase: u,
+		repo:    r,
 	}
 }
