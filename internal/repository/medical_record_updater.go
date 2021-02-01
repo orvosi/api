@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"time"
 
 	"github.com/orvosi/api/entity"
 )
@@ -31,4 +32,23 @@ func (mu *MedicalRecordUpdater) DoesRecordExist(ctx context.Context, id uint64, 
 		return false, nil
 	}
 	return true, nil
+}
+
+// Update updates the whole record data.
+func (mu *MedicalRecordUpdater) Update(ctx context.Context, id uint64, record *entity.MedicalRecord) *entity.Error {
+	query := "UPDATE medical_records SET symptom = $1, diagnosis = $2, therapy = $3, result = $4, updated_at = $5, updated_by = $6 WHERE id = $7"
+	_, err := mu.db.ExecContext(ctx, query,
+		record.Symptom,
+		record.Diagnosis,
+		record.Therapy,
+		record.Result,
+		time.Now(),
+		record.User.Email,
+		id,
+	)
+
+	if err != nil {
+		return entity.WrapError(entity.ErrInternalServer, err.Error())
+	}
+	return nil
 }
