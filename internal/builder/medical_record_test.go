@@ -32,3 +32,15 @@ func TestBuildMedicalRecordFinder(t *testing.T) {
 		assert.NotEmpty(t, routes)
 	})
 }
+
+func TestBuildMedicalRecordUpdater(t *testing.T) {
+	t.Run("successfully build medical record updater", func(t *testing.T) {
+		cfg, err := config.NewConfig("../../test/fixture/env.valid")
+		assert.Nil(t, err)
+
+		db := &sql.DB{}
+
+		routes := builder.BuildMedicalRecordUpdater(cfg, db)
+		assert.NotEmpty(t, routes)
+	})
+}
