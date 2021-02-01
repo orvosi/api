@@ -33,3 +33,17 @@ func MedicalRecordFinder(h *handler.MedicalRecordFinder) []*Route {
 	routes = append(routes, r)
 	return routes
 }
+
+// MedicalRecordUpdater creates routes for medical record updater.
+func MedicalRecordUpdater(h *handler.MedicalRecordUpdater) []*Route {
+	var routes []*Route
+
+	r := &Route{
+		Method:  http.MethodPut,
+		Path:    "/medical-records/:id",
+		Handler: h.Update,
+	}
+
+	routes = append(routes, r)
+	return routes
+}
