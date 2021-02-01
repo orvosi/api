@@ -22,9 +22,9 @@ type FindMedicalRecord interface {
 	FindByEmail(ctx context.Context, email string) ([]*entity.MedicalRecord, *entity.Error)
 }
 
-// MedicalRecordSelector defines the business logic
-// to select or find medical record data from storage.
-type MedicalRecordSelector interface {
+// FindMedicalRecordRepository defines the business logic
+// to select or find medical record data from repository.
+type FindMedicalRecordRepository interface {
 	// FindByID finds medical records by its id.
 	FindByID(ctx context.Context, id uint64) (*entity.MedicalRecord, *entity.Error)
 	// FindByEmail finds all medical records bounded to specific email.
@@ -33,13 +33,13 @@ type MedicalRecordSelector interface {
 
 // MedicalRecordFinder responsibles for medical record find workflow.
 type MedicalRecordFinder struct {
-	selector MedicalRecordSelector
+	repo FindMedicalRecordRepository
 }
 
 // NewMedicalRecordFinder creates an instance of MedicalRecordFinder.
-func NewMedicalRecordFinder(selector MedicalRecordSelector) *MedicalRecordFinder {
+func NewMedicalRecordFinder(repo FindMedicalRecordRepository) *MedicalRecordFinder {
 	return &MedicalRecordFinder{
-		selector: selector,
+		repo: repo,
 	}
 }
 
@@ -47,7 +47,7 @@ func NewMedicalRecordFinder(selector MedicalRecordSelector) *MedicalRecordFinder
 // Only medical record that is owned by the right user's email can be retrieved.
 // If the medical record is not owned by the user, it will return ErrUnauthorized.
 func (mf *MedicalRecordFinder) FindByID(ctx context.Context, id uint64, email string) (*entity.MedicalRecord, *entity.Error) {
-	mr, err := mf.selector.FindByID(ctx, id)
+	mr, err := mf.repo.FindByID(ctx, id)
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +65,7 @@ func (mf *MedicalRecordFinder) FindByEmail(ctx context.Context, email string) ([
 		return []*entity.MedicalRecord{}, entity.ErrInvalidEmail
 	}
 
-	return mf.selector.FindByEmail(ctx, email)
+	return mf.repo.FindByEmail(ctx, email)
 }
 
 func validateEmail(email string) *entity.Error {
