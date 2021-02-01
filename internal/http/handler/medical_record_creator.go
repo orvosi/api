@@ -11,8 +11,8 @@ import (
 	"github.com/orvosi/api/usecase"
 )
 
-// MedicalRecordRequest represents medical record request.
-type MedicalRecordRequest struct {
+// CreateMedicalRecordRequest represents medical record request.
+type CreateMedicalRecordRequest struct {
 	Symptom   string `json:"symptom"`
 	Diagnosis string `json:"diagnosis"`
 	Therapy   string `json:"therapy"`
@@ -33,7 +33,7 @@ func NewMedicalRecordCreator(creator usecase.CreateMedicalRecord) *MedicalRecord
 
 // Create handles `POST /medical-records` endpoint.
 func (mrc *MedicalRecordCreator) Create(ctx echo.Context) error {
-	var request MedicalRecordRequest
+	var request CreateMedicalRecordRequest
 	if err := ctx.Bind(&request); err != nil {
 		res := response.NewError(entity.ErrInvalidMedicalRecordRequest)
 		ctx.JSON(http.StatusBadRequest, res)
@@ -71,7 +71,7 @@ func extractUserFromRequestContext(ctx context.Context) (*entity.User, error) {
 	return user, nil
 }
 
-func createMedicalRecordFromRequest(req *MedicalRecordRequest, user *entity.User) *entity.MedicalRecord {
+func createMedicalRecordFromRequest(req *CreateMedicalRecordRequest, user *entity.User) *entity.MedicalRecord {
 	return &entity.MedicalRecord{
 		User:      user,
 		Symptom:   req.Symptom,
