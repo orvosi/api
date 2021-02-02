@@ -21,13 +21,13 @@ func NewMedicalRecordSelector(db *sql.DB) *MedicalRecordSelector {
 
 // FindByID finds medical record by its id.
 func (ms *MedicalRecordSelector) FindByID(ctx context.Context, id uint64) (*entity.MedicalRecord, *entity.Error) {
-	query := "SELECT id, symptom, diagnosis, therapy, result, updated_at, email FROM medical_records WHERE id = $1 LIMIT 1"
+	query := "SELECT id, symptom, diagnosis, therapy, result, created_at, created_by, updated_at, updated_by, email FROM medical_records WHERE id = $1 LIMIT 1"
 	row := ms.db.QueryRowContext(ctx, query, id)
 
 	mr := &entity.MedicalRecord{
 		User: &entity.User{},
 	}
-	if err := row.Scan(&mr.ID, &mr.Symptom, &mr.Diagnosis, &mr.Therapy, &mr.Result, &mr.UpdatedAt, &mr.User.Email); err != nil {
+	if err := row.Scan(&mr.ID, &mr.Symptom, &mr.Diagnosis, &mr.Therapy, &mr.Result, &mr.CreatedAt, &mr.CreatedBy, &mr.UpdatedAt, &mr.UpdatedBy, &mr.User.Email); err != nil {
 		return nil, entity.WrapError(entity.ErrInternalServer, err.Error())
 	}
 	return mr, nil
@@ -35,7 +35,7 @@ func (ms *MedicalRecordSelector) FindByID(ctx context.Context, id uint64) (*enti
 
 // FindByEmail finds all medical records bounded to specific email.
 func (ms *MedicalRecordSelector) FindByEmail(ctx context.Context, email string) ([]*entity.MedicalRecord, *entity.Error) {
-	query := "SELECT id, symptom, diagnosis, therapy, result, updated_at FROM medical_records WHERE email = $1 ORDER BY id ASC"
+	query := "SELECT id, symptom, diagnosis, therapy, result, created_at, created_by, updated_at, updated_by FROM medical_records WHERE email = $1 ORDER BY id ASC"
 	rows, err := ms.db.QueryContext(ctx, query, email)
 	if err != nil {
 		return []*entity.MedicalRecord{}, entity.WrapError(entity.ErrInternalServer, err.Error())
@@ -45,7 +45,7 @@ func (ms *MedicalRecordSelector) FindByEmail(ctx context.Context, email string) 
 	var result []*entity.MedicalRecord
 	for rows.Next() {
 		var tmp entity.MedicalRecord
-		if err := rows.Scan(&tmp.ID, &tmp.Symptom, &tmp.Diagnosis, &tmp.Therapy, &tmp.Result, &tmp.UpdatedAt); err != nil {
+		if err := rows.Scan(&tmp.ID, &tmp.Symptom, &tmp.Diagnosis, &tmp.Therapy, &tmp.Result, &tmp.CreatedAt, &tmp.CreatedBy, &tmp.UpdatedAt, &tmp.UpdatedBy); err != nil {
 			log.Printf("[MedicalRecordSelector-FindByEmail] scan rows error: %v", err)
 			continue
 		}
