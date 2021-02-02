@@ -28,6 +28,9 @@ var (
 	ErrInvalidEmail = NewError("02-004", "Email is invalid. Please, check the email")
 	// ErrMedicalRecordNotFound indicates that the medical record can't be found.
 	ErrMedicalRecordNotFound = NewError("02-005", "Medical record not found")
+
+	// ErrEmptyUser indicates that a user is empty or null.
+	ErrEmptyUser = NewError("03-001", "User is empty")
 )
 
 // Error represents a data structure for error.
