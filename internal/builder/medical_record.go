@@ -31,8 +31,8 @@ func BuildMedicalRecordFinder(cfg *config.Config, db *sql.DB) []*router.Route {
 // BuildMedicalRecordUpdater builds medical record update workflow
 // starting from handler down to repository.
 func BuildMedicalRecordUpdater(cfg *config.Config, db *sql.DB) []*router.Route {
-	sel := repository.NewMedicalRecordUpdater(db)
-	uc := usecase.NewMedicalRecordUpdater(sel)
+	up := repository.NewMedicalRecordUpdater(db)
+	uc := usecase.NewMedicalRecordUpdater(up)
 	hdr := handler.NewMedicalRecordUpdater(uc)
 	return router.MedicalRecordUpdater(hdr)
 }
