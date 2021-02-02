@@ -9,3 +9,14 @@
 ## Description
 
 API provides HTTP REST API for Orvosi application.
+
+## SLI and SLO
+
+- Availability: TBD
+- Average response time
+  - POST /sign-in: TBD
+  - POST /medical-records: TBD
+  - GET /medical-records: TBD
+  - GET /medical-records/:id: TBD
+  - PUT /medical-records: TBD
+  
