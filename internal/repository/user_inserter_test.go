@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/indrasaputra/hashids"
 	"github.com/orvosi/api/entity"
 	"github.com/orvosi/api/internal/repository"
 	"github.com/stretchr/testify/assert"
@@ -32,6 +33,25 @@ func TestUserInserter_InsertOrIgnore(t *testing.T) {
 		assert.NotNil(t, err)
 		assert.Equal(t, entity.ErrEmptyUser, err)
 	})
+
+	t.Run("database returns error", func(t *testing.T) {
+		exec := createUserInserterExecutor()
+
+		user := createValidUser()
+		err := exec.repo.InsertOrIgnore(context.Background(), user)
+
+		assert.NotNil(t, err)
+		assert.Equal(t, entity.ErrInternalServer, err)
+	})
+}
+
+func createValidUser() *entity.User {
+	return &entity.User{
+		ID:       hashids.ID(1),
+		Email:    "email@provider.com",
+		Name:     "User 1",
+		GoogleID: "super-long-google-id",
+	}
 }
 
 func createUserInserterExecutor() *UserInserter_Executor {
