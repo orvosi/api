@@ -1,9 +1,11 @@
 package usecase_test
 
 import (
+	"context"
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/orvosi/api/entity"
 	mock_usecase "github.com/orvosi/api/test/mock/usecase"
 	"github.com/orvosi/api/usecase"
 	"github.com/stretchr/testify/assert"
@@ -21,6 +23,20 @@ func TestNewSignIn(t *testing.T) {
 	t.Run("successfully create an instance of SignIn", func(t *testing.T) {
 		exec := createSignInExecutor(ctrl)
 		assert.NotNil(t, exec.usecase)
+	})
+}
+
+func TestSigner_SignIn(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	t.Run("user is empty/nil", func(t *testing.T) {
+		exec := createSignInExecutor(ctrl)
+
+		err := exec.usecase.SignIn(context.Background(), nil)
+
+		assert.NotNil(t, err)
+		assert.Equal(t, entity.ErrEmptyUser, err)
 	})
 }
 
