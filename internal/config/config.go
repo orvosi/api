@@ -23,11 +23,18 @@ type Google struct {
 	Audience string `env:"GOOGLE_AUDIENCE,required"`
 }
 
+// Hashid holds configuration related to Hashid.
+type Hashid struct {
+	Salt      string `env:"HASHID_SALT,required"`
+	MinLength uint   `env:"HASHID_MIN_LENGTH,required"`
+}
+
 // Config holds configuration for the project.
 type Config struct {
 	Port     string `env:"PORT,default=6666"`
 	Database Database
 	Google   Google
+	Hashid   Hashid
 }
 
 // NewConfig creates an instance of Config.
