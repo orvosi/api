@@ -39,7 +39,7 @@ func TestMedicalRecordInserter_Insert(t *testing.T) {
 		exec := createMedicalRecordInserterExecutor()
 		record := createValidMedicalRecord()
 
-		exec.sql.ExpectQuery(`INSERT INTO medical_records \(user_id, symptom, diagnosis, therapy, created_at, updated_at, created_by, updated_by\) VALUES \(\$1, \$2, \$3, \$4, \$5, \$6, \$7, \$8\) RETURNING id`).
+		exec.sql.ExpectQuery(`INSERT INTO medical_records \(email, symptom, diagnosis, therapy, created_at, updated_at, created_by, updated_by\) VALUES \(\$1, \$2, \$3, \$4, \$5, \$6, \$7, \$8\) RETURNING id`).
 			WillReturnError(errors.New("fail to insert to database"))
 
 		err := exec.repo.Insert(context.Background(), record)
@@ -52,7 +52,7 @@ func TestMedicalRecordInserter_Insert(t *testing.T) {
 		exec := createMedicalRecordInserterExecutor()
 		record := createValidMedicalRecord()
 
-		exec.sql.ExpectQuery(`INSERT INTO medical_records \(user_id, symptom, diagnosis, therapy, created_at, updated_at, created_by, updated_by\) VALUES \(\$1, \$2, \$3, \$4, \$5, \$6, \$7, \$8\) RETURNING id`).
+		exec.sql.ExpectQuery(`INSERT INTO medical_records \(email, symptom, diagnosis, therapy, created_at, updated_at, created_by, updated_by\) VALUES \(\$1, \$2, \$3, \$4, \$5, \$6, \$7, \$8\) RETURNING id`).
 			WillReturnRows(sqlmock.
 				NewRows([]string{"id"}).
 				AddRow(999),
