@@ -2,6 +2,7 @@ package repository_test
 
 import (
 	"context"
+	"errors"
 	"log"
 	"testing"
 
@@ -36,6 +37,9 @@ func TestUserInserter_InsertOrIgnore(t *testing.T) {
 
 	t.Run("database returns error", func(t *testing.T) {
 		exec := createUserInserterExecutor()
+
+		exec.sql.ExpectExec(`INSERT INTO users \(name, email, google_id, created_at, updated_at, created_by, updated_by\) VALUES \(\$1, \$2, \$3, \$4, \$5, \$6, \$7\) ON CONFLICT \(email\) DO NOTHING`).
+			WillReturnError(errors.New("fail to insert to database"))
 
 		user := createValidUser()
 		err := exec.repo.InsertOrIgnore(context.Background(), user)
