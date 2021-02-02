@@ -6,4 +6,6 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/3fa0f93762298b7ae7bc/maintainability)](https://codeclimate.com/github/orvosi/api/maintainability)
 [![Go Reference](https://pkg.go.dev/badge/github.com/orvosi/api.svg)](https://pkg.go.dev/github.com/orvosi/api)
 
-API provides HTTP API for Orvosi.
+## Description
+
+API provides HTTP REST API for Orvosi application.
