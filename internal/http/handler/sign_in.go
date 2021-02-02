@@ -34,7 +34,7 @@ func (s *Signer) SignIn(ctx echo.Context) error {
 	if err := s.signin.SignIn(ctx.Request().Context(), user); err != nil {
 		res := response.NewError(err)
 		status := http.StatusInternalServerError
-		if err.Code != entity.ErrEmptyUser.Code {
+		if err.Code == entity.ErrEmptyUser.Code {
 			status = http.StatusBadRequest
 		}
 		ctx.JSON(status, res)
