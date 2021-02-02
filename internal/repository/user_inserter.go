@@ -22,6 +22,10 @@ func NewUserInserter(db *sql.DB) *UserInserter {
 // InsertOrIgnore inserts a new data into the database.
 // If the user already exists in the database, it does nothing.
 func (ui *UserInserter) InsertOrIgnore(ctx context.Context, user *entity.User) *entity.Error {
+	if user == nil {
+		return entity.ErrEmptyUser
+	}
+
 	query := "INSERT INTO users (name, email, google_id, created_at, updated_at, created_by, updated_by) VALUES ($1, $2, $3, $4, $5, $6, $7) ON CONFLICT (email) DO NOTHING"
 	_, err := ui.db.ExecContext(ctx, query,
 		user.Name,
