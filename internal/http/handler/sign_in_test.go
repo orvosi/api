@@ -63,8 +63,26 @@ func TestSigner_SignIn(t *testing.T) {
 		exec.usecase.EXPECT().SignIn(ctx.Request().Context(), user).Return(entity.ErrEmptyUser)
 		exec.handler.SignIn(ctx)
 
-		assert.Equal(t, http.StatusInternalServerError, rec.Code)
+		assert.Equal(t, http.StatusBadRequest, rec.Code)
 		str := fmt.Sprintf("%s\n", `{"errors":[{"code":"03-001","message":"User is empty"}],"meta":null}`)
+		assert.Equal(t, str, rec.Body.String())
+	})
+
+	t.Run("signer service returns internal error", func(t *testing.T) {
+		req := httptest.NewRequest(http.MethodPost, "/", nil)
+		user := createUserInformation()
+		req = req.WithContext(context.WithValue(context.Background(), middleware.ContextKeyUser, user))
+
+		rec := httptest.NewRecorder()
+		e := echo.New()
+		ctx := e.NewContext(req, rec)
+
+		exec := createSignerExecutor(ctrl)
+		exec.usecase.EXPECT().SignIn(ctx.Request().Context(), user).Return(entity.ErrInternalServer)
+		exec.handler.SignIn(ctx)
+
+		assert.Equal(t, http.StatusInternalServerError, rec.Code)
+		str := fmt.Sprintf("%s\n", `{"errors":[{"code":"01-001","message":"Internal server error"}],"meta":null}`)
 		assert.Equal(t, str, rec.Body.String())
 	})
 }
