@@ -27,11 +27,11 @@ func (mri *MedicalRecordInserter) Insert(ctx context.Context, record *entity.Med
 	}
 
 	query := "INSERT INTO " +
-		"medical_records (user_id, symptom, diagnosis, therapy, created_at, updated_at, created_by, updated_by) " +
+		"medical_records (email, symptom, diagnosis, therapy, created_at, updated_at, created_by, updated_by) " +
 		"VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id"
 
 	row := mri.db.QueryRow(query,
-		record.User.ID,
+		record.User.Email,
 		record.Symptom,
 		record.Diagnosis,
 		record.Therapy,
