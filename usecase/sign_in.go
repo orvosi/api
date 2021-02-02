@@ -25,6 +25,13 @@ type Signer struct {
 	repo InsertUserRepository
 }
 
+// NewSigner creates an instance of Signer.
+func NewSigner(repo InsertUserRepository) *Signer {
+	return &Signer{
+		repo: repo,
+	}
+}
+
 // SignIn signs in a user to the system.
 // If the user doesn't exist yet in the system, it will register the user.
 func (s *Signer) SignIn(ctx context.Context, user *entity.User) *entity.Error {
