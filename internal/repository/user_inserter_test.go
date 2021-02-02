@@ -47,6 +47,18 @@ func TestUserInserter_InsertOrIgnore(t *testing.T) {
 		assert.NotNil(t, err)
 		assert.Equal(t, entity.ErrInternalServer, err)
 	})
+
+	t.Run("successfully insert or ignore user", func(t *testing.T) {
+		exec := createUserInserterExecutor()
+
+		exec.sql.ExpectExec(`INSERT INTO users \(name, email, google_id, created_at, updated_at, created_by, updated_by\) VALUES \(\$1, \$2, \$3, \$4, \$5, \$6, \$7\) ON CONFLICT \(email\) DO NOTHING`).
+			WillReturnResult(sqlmock.NewResult(1, 1))
+
+		user := createValidUser()
+		err := exec.repo.InsertOrIgnore(context.Background(), user)
+
+		assert.Nil(t, err)
+	})
 }
 
 func createValidUser() *entity.User {
