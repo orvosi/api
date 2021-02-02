@@ -51,6 +51,17 @@ func TestSigner_SignIn(t *testing.T) {
 		assert.NotNil(t, err)
 		assert.Equal(t, entity.ErrInternalServer, err)
 	})
+
+	t.Run("successfully insert or ignore user", func(t *testing.T) {
+		exec := createSignInExecutor(ctrl)
+
+		user := createValidUser()
+		exec.repo.EXPECT().InsertOrIgnore(context.Background(), user).Return(nil)
+
+		err := exec.usecase.SignIn(context.Background(), user)
+
+		assert.Nil(t, err)
+	})
 }
 
 func createValidUser() *entity.User {
