@@ -29,11 +29,12 @@ func main() {
 	jwtDec := tool.NewIDTokenDecoder(cfg.Google.Audience)
 	jwtMidd := middleware.WithJWTDecoder(jwtDec.Decode)
 
+	signer := builder.BuildSigner(cfg, db)
 	medRecCreator := builder.BuildMedicalRecordCreator(cfg, db)
 	medRecFinder := builder.BuildMedicalRecordFinder(cfg, db)
 	medRecUpdater := builder.BuildMedicalRecordUpdater(cfg, db)
 
-	srv := server.NewServer(jwtMidd, append(append(medRecCreator, medRecFinder...), medRecUpdater...))
+	srv := server.NewServer(jwtMidd, append(append(append(medRecCreator, medRecFinder...), medRecUpdater...), signer...))
 	runServer(srv, cfg.Port)
 	waitForShutdown(srv)
 }
