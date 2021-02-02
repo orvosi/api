@@ -1,6 +1,7 @@
 package handler_test
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -8,7 +9,9 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/labstack/echo/v4"
+	"github.com/orvosi/api/entity"
 	"github.com/orvosi/api/internal/http/handler"
+	"github.com/orvosi/api/internal/http/middleware"
 	mock_usecase "github.com/orvosi/api/test/mock/usecase"
 	"github.com/stretchr/testify/assert"
 )
@@ -44,6 +47,24 @@ func TestSigner_SignIn(t *testing.T) {
 
 		assert.Equal(t, http.StatusInternalServerError, rec.Code)
 		str := fmt.Sprintf("%s\n", `{"errors":[{"code":"01-001","message":"Internal server error"}],"meta":null}`)
+		assert.Equal(t, str, rec.Body.String())
+	})
+
+	t.Run("somehow signer service doesn't receive user", func(t *testing.T) {
+		req := httptest.NewRequest(http.MethodPost, "/", nil)
+		user := createUserInformation()
+		req = req.WithContext(context.WithValue(context.Background(), middleware.ContextKeyUser, user))
+
+		rec := httptest.NewRecorder()
+		e := echo.New()
+		ctx := e.NewContext(req, rec)
+
+		exec := createSignerExecutor(ctrl)
+		exec.usecase.EXPECT().SignIn(ctx.Request().Context(), user).Return(entity.ErrEmptyUser)
+		exec.handler.SignIn(ctx)
+
+		assert.Equal(t, http.StatusInternalServerError, rec.Code)
+		str := fmt.Sprintf("%s\n", `{"errors":[{"code":"03-001","message":"User is empty"}],"meta":null}`)
 		assert.Equal(t, str, rec.Body.String())
 	})
 }
