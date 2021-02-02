@@ -7,6 +7,7 @@ import (
 	"os/signal"
 	"time"
 
+	"github.com/indrasaputra/hashids"
 	_ "github.com/lib/pq"
 	"github.com/orvosi/api/internal/builder"
 	"github.com/orvosi/api/internal/config"
@@ -22,6 +23,10 @@ const (
 func main() {
 	cfg, err := config.NewConfig(".env")
 	checkError(err)
+
+	hash, err := hashids.NewHashID(cfg.Hashid.MinLength, cfg.Hashid.Salt)
+	checkError(err)
+	hashids.SetHasher(hash)
 
 	db, err := builder.BuildSQLDatabase(dbDriver, cfg)
 	checkError(err)
