@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/indrasaputra/hashids"
 	"github.com/orvosi/api/entity"
 	mock_usecase "github.com/orvosi/api/test/mock/usecase"
 	"github.com/orvosi/api/usecase"
@@ -38,6 +39,27 @@ func TestSigner_SignIn(t *testing.T) {
 		assert.NotNil(t, err)
 		assert.Equal(t, entity.ErrEmptyUser, err)
 	})
+
+	t.Run("repo returns error", func(t *testing.T) {
+		exec := createSignInExecutor(ctrl)
+
+		user := createValidUser()
+		exec.repo.EXPECT().InsertOrIgnore(context.Background(), user).Return(entity.ErrInternalServer)
+
+		err := exec.usecase.SignIn(context.Background(), user)
+
+		assert.NotNil(t, err)
+		assert.Equal(t, entity.ErrInternalServer, err)
+	})
+}
+
+func createValidUser() *entity.User {
+	return &entity.User{
+		ID:       hashids.ID(1),
+		Email:    "email@provider.com",
+		Name:     "User 1",
+		GoogleID: "super-long-google-id",
+	}
 }
 
 func createSignInExecutor(ctrl *gomock.Controller) *SignIn_Executor {
