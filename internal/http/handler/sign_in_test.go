@@ -85,6 +85,24 @@ func TestSigner_SignIn(t *testing.T) {
 		str := fmt.Sprintf("%s\n", `{"errors":[{"code":"01-001","message":"Internal server error"}],"meta":null}`)
 		assert.Equal(t, str, rec.Body.String())
 	})
+
+	t.Run("successfully sign in", func(t *testing.T) {
+		req := httptest.NewRequest(http.MethodPost, "/", nil)
+		user := createUserInformation()
+		req = req.WithContext(context.WithValue(context.Background(), middleware.ContextKeyUser, user))
+
+		rec := httptest.NewRecorder()
+		e := echo.New()
+		ctx := e.NewContext(req, rec)
+
+		exec := createSignerExecutor(ctrl)
+		exec.usecase.EXPECT().SignIn(ctx.Request().Context(), user).Return(nil)
+		exec.handler.SignIn(ctx)
+
+		assert.Equal(t, http.StatusCreated, rec.Code)
+		str := fmt.Sprintf("%s\n", `{"data":null,"meta":{}}`)
+		assert.Equal(t, str, rec.Body.String())
+	})
 }
 
 func createSignerExecutor(ctrl *gomock.Controller) *Signer_Executor {
