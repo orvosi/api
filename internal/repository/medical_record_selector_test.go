@@ -29,7 +29,7 @@ func TestMedicalRecordSelector_FindByID(t *testing.T) {
 	t.Run("select query returns error", func(t *testing.T) {
 		exec := createMedicalRecordSelectorExecutor()
 
-		exec.sql.ExpectQuery(`SELECT id, symptom, diagnosis, therapy, result, updated_at, email FROM medical_records WHERE id = \$1 LIMIT 1`).
+		exec.sql.ExpectQuery(`SELECT id, symptom, diagnosis, therapy, result, created_at, created_by, updated_at, updated_by, email FROM medical_records WHERE id = \$1 LIMIT 1`).
 			WillReturnError(errors.New("fail to select from database"))
 
 		res, err := exec.repo.FindByID(context.Background(), uint64(1))
@@ -42,10 +42,10 @@ func TestMedicalRecordSelector_FindByID(t *testing.T) {
 	t.Run("row scan returns error", func(t *testing.T) {
 		exec := createMedicalRecordSelectorExecutor()
 
-		exec.sql.ExpectQuery(`SELECT id, symptom, diagnosis, therapy, result, updated_at, email FROM medical_records WHERE id = \$1 LIMIT 1`).
+		exec.sql.ExpectQuery(`SELECT id, symptom, diagnosis, therapy, result, created_at, created_by, updated_at, updated_by, email FROM medical_records WHERE id = \$1 LIMIT 1`).
 			WillReturnRows(sqlmock.
-				NewRows([]string{"id", "symptom", "diagnosis", "therapy", "result", "updated_at", "email"}).
-				AddRow(1, "Symptom", "Diagnosis", "Therapy", "Result", "time.Now()", "dummy@dummy.com"),
+				NewRows([]string{"id", "symptom", "diagnosis", "therapy", "result", "created_at", "created_by", "updated_at", "updated_by", "email"}).
+				AddRow(1, "Symptom", "Diagnosis", "Therapy", "Result", "time.Now()", "dummy@dummy.com", "time.Now()", "dummy@dummy.com", "dummy@dummy.com"),
 			)
 
 		res, err := exec.repo.FindByID(context.Background(), uint64(1))
@@ -57,10 +57,10 @@ func TestMedicalRecordSelector_FindByID(t *testing.T) {
 	t.Run("successfully retrieve one medical record", func(t *testing.T) {
 		exec := createMedicalRecordSelectorExecutor()
 
-		exec.sql.ExpectQuery(`SELECT id, symptom, diagnosis, therapy, result, updated_at, email FROM medical_records WHERE id = \$1 LIMIT 1`).
+		exec.sql.ExpectQuery(`SELECT id, symptom, diagnosis, therapy, result, created_at, created_by, updated_at, updated_by, email FROM medical_records WHERE id = \$1 LIMIT 1`).
 			WillReturnRows(sqlmock.
-				NewRows([]string{"id", "symptom", "diagnosis", "therapy", "result", "updated_at", "email"}).
-				AddRow(1, "Symptom", "Diagnosis", "Therapy", "Result", time.Now(), "dummy@dummy.com"),
+				NewRows([]string{"id", "symptom", "diagnosis", "therapy", "result", "created_at", "created_by", "updated_at", "updated_by", "email"}).
+				AddRow(1, "Symptom", "Diagnosis", "Therapy", "Result", time.Now(), "dummy@dummy.com", time.Now(), "dummy@dummy.com", "dummy@dummy.com"),
 			)
 
 		res, err := exec.repo.FindByID(context.Background(), uint64(1))
@@ -75,7 +75,7 @@ func TestMedicalRecordSelector_FindByEmail(t *testing.T) {
 	t.Run("select query returns error", func(t *testing.T) {
 		exec := createMedicalRecordSelectorExecutor()
 
-		exec.sql.ExpectQuery(`SELECT id, symptom, diagnosis, therapy, result, updated_at FROM medical_records WHERE email = \$1 ORDER BY id ASC`).
+		exec.sql.ExpectQuery(`SELECT id, symptom, diagnosis, therapy, result, created_at, created_by, updated_at, updated_by FROM medical_records WHERE email = \$1 ORDER BY id ASC`).
 			WillReturnError(errors.New("fail to select from database"))
 
 		res, err := exec.repo.FindByEmail(context.Background(), "dummy@dummy.com")
@@ -88,11 +88,11 @@ func TestMedicalRecordSelector_FindByEmail(t *testing.T) {
 	t.Run("row scan returns error", func(t *testing.T) {
 		exec := createMedicalRecordSelectorExecutor()
 
-		exec.sql.ExpectQuery(`SELECT id, symptom, diagnosis, therapy, result, updated_at FROM medical_records WHERE email = \$1 ORDER BY id ASC`).
+		exec.sql.ExpectQuery(`SELECT id, symptom, diagnosis, therapy, result, created_at, created_by, updated_at, updated_by FROM medical_records WHERE email = \$1 ORDER BY id ASC`).
 			WillReturnRows(sqlmock.
-				NewRows([]string{"id", "symptom", "diagnosis", "therapy", "result", "updated_at"}).
-				AddRow(1, "Symptom", "Diagnosis", "Therapy", "Result", time.Now()).
-				AddRow(2, "Symptom", "Diagnosis", "Therapy", "Result", "time.Now()"),
+				NewRows([]string{"id", "symptom", "diagnosis", "therapy", "result", "created_at", "created_by", "updated_at", "updated_by"}).
+				AddRow(1, "Symptom", "Diagnosis", "Therapy", "Result", time.Now(), "dummy@dummy.com", time.Now(), "dummy@dummy.com").
+				AddRow(2, "Symptom", "Diagnosis", "Therapy", "Result", "time.Now()", "dummy@dummy.com", "time.Now()", "dummy@dummy.com"),
 			)
 
 		res, err := exec.repo.FindByEmail(context.Background(), "dummy@dummy.com")
@@ -105,11 +105,11 @@ func TestMedicalRecordSelector_FindByEmail(t *testing.T) {
 	t.Run("successfully retrieve all rows", func(t *testing.T) {
 		exec := createMedicalRecordSelectorExecutor()
 
-		exec.sql.ExpectQuery(`SELECT id, symptom, diagnosis, therapy, result, updated_at FROM medical_records WHERE email = \$1 ORDER BY id ASC`).
+		exec.sql.ExpectQuery(`SELECT id, symptom, diagnosis, therapy, result, created_at, created_by, updated_at, updated_by FROM medical_records WHERE email = \$1 ORDER BY id ASC`).
 			WillReturnRows(sqlmock.
-				NewRows([]string{"id", "symptom", "diagnosis", "therapy", "result", "updated_at"}).
-				AddRow(1, "Symptom", "Diagnosis", "Therapy", "Result", time.Now()).
-				AddRow(2, "Symptom", "Diagnosis", "Therapy", "Result", time.Now()),
+				NewRows([]string{"id", "symptom", "diagnosis", "therapy", "result", "created_at", "created_by", "updated_at", "updated_by"}).
+				AddRow(1, "Symptom", "Diagnosis", "Therapy", "Result", time.Now(), "dummy@dummy.com", time.Now(), "dummy@dummy.com").
+				AddRow(2, "Symptom", "Diagnosis", "Therapy", "Result", time.Now(), "dummy@dummy.com", time.Now(), "dummy@dummy.com"),
 			)
 
 		res, err := exec.repo.FindByEmail(context.Background(), "dummy@dummy.com")
