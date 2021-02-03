@@ -24,4 +24,6 @@ API provides HTTP REST API for Orvosi application.
 
 ![orvosi-api](https://user-images.githubusercontent.com/4661221/106680454-43908300-65f1-11eb-9f60-c92e900d99f9.png)
 
-  
+## Owner
+
+[Indra Saputra](https://github.com/indrasaputra)
