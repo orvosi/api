@@ -168,3 +168,46 @@ None
     "meta": null
 }
 ```
+
+### `POST /medical-records`
+
+#### Authentication
+
+Bearer token
+
+#### Request Body
+
+```
+{
+    "symptom": string,
+    "diagnosis": string,
+    "therapy": string
+}
+```
+
+#### Request Parameters
+
+None
+
+#### Success Response
+
+```
+{
+    "data": null,
+    "meta": {}
+}
+```
+
+#### Error Response
+
+```
+{
+    "errors": [
+        {
+            "code": "",
+            "message": ""
+        }
+    ],
+    "meta": null
+}
+```
