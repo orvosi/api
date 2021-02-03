@@ -80,6 +80,12 @@ API provides HTTP REST API for Orvosi application.
     make migrate url=postgres://user:password@localhost:5432/orvosi
     ```
 
+- Run the application
+
+    ```
+    go run app/api/main.go
+    ```
+
 ### Development Guide
 
 - Fork the project
