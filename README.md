@@ -351,3 +351,7 @@ None
     "meta": null
 }
 ```
+
+## Dependencies
+
+- PostgreSQL
