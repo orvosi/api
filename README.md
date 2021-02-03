@@ -129,3 +129,42 @@ API provides HTTP REST API for Orvosi application.
 ### Update medical record's detail
 
 ![orvosi-update_medical_record](https://user-images.githubusercontent.com/4661221/106691051-6cbb0e80-6605-11eb-9dfa-a99805df52d9.png)
+
+## Endpoints
+
+### `POST /sign-in`
+
+#### Authentication
+
+Bearer token
+
+#### Request Body
+
+None
+
+#### Request Parameters
+
+None
+
+#### Success Response
+
+```
+{
+    "data": null,
+    "meta": {}
+}
+```
+
+#### Error Response
+
+```
+{
+    "errors": [
+        {
+            "code": "",
+            "message": ""
+        }
+    ],
+    "meta": null
+}
+```
