@@ -14,11 +14,11 @@ API provides HTTP REST API for Orvosi application.
 
 - Availability: TBD
 - Average response time
-    - POST /sign-in: TBD
-    - POST /medical-records: TBD
-    - GET /medical-records: TBD
-    - GET /medical-records/:id: TBD
-    - PUT /medical-records: TBD
+    - `POST /sign-in`: TBD
+    - `POST /medical-records`: TBD
+    - `GET /medical-records`: TBD
+    - `GET /medical-records/:id`: TBD
+    - `PUT /medical-records`: TBD
 
 ## Architecture Diagram
 
