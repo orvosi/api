@@ -18,7 +18,7 @@ API provides HTTP REST API for Orvosi application.
     - `POST /medical-records`: TBD
     - `GET /medical-records`: TBD
     - `GET /medical-records/:id`: TBD
-    - `PUT /medical-records`: TBD
+    - `PUT /medical-records/:id`: TBD
 
 ## Architecture Diagram
 
