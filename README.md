@@ -125,3 +125,7 @@ API provides HTTP REST API for Orvosi application.
 ### Get medical record's detail
 
 ![orvosi-get_medical_record](https://user-images.githubusercontent.com/4661221/106690781-fb7b5b80-6604-11eb-894b-41e6a65d3409.png)
+
+### Update medical record's detail
+
+![orvosi-update_medical_record](https://user-images.githubusercontent.com/4661221/106691051-6cbb0e80-6605-11eb-9dfa-a99805df52d9.png)
