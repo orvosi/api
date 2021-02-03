@@ -307,3 +307,47 @@ None
     "meta": null
 }
 ```
+
+### `PUT /medical-records/:id`
+
+#### Authentication
+
+Bearer token
+
+#### Request Body
+
+```
+{
+    "symptom": string,
+    "diagnosis": string,
+    "therapy": string,
+    "result": string
+}
+```
+
+#### Request Parameters
+
+None
+
+#### Success Response
+
+```
+{
+    "data": null,
+    "meta": {}
+}
+```
+
+#### Error Response
+
+```
+{
+    "errors": [
+        {
+            "code": string,
+            "message": string
+        }
+    ],
+    "meta": null
+}
+```
