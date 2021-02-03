@@ -161,8 +161,8 @@ None
 {
     "errors": [
         {
-            "code": "",
-            "message": ""
+            "code": string,
+            "message": string
         }
     ],
     "meta": null
@@ -204,8 +204,57 @@ None
 {
     "errors": [
         {
-            "code": "",
-            "message": ""
+            "code": string,
+            "message": string
+        }
+    ],
+    "meta": null
+}
+```
+
+### `GET /medical-records`
+
+#### Authentication
+
+Bearer token
+
+#### Request Body
+
+None
+
+#### Request Parameters
+
+None
+
+#### Success Response
+
+```
+{
+    "data": [
+        {
+            "id": string,
+            "symptom": string,
+            "diagnosis": string,
+            "therapy": string,
+            "result": string,
+            "created_by": string,
+            "created_at": time in string,
+            "updated_by": string,
+            "updated_at": time in string
+        }
+    ],
+    "meta": {}
+}
+```
+
+#### Error Response
+
+```
+{
+    "errors": [
+        {
+            "code": string,
+            "message": string
         }
     ],
     "meta": null
