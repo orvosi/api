@@ -105,3 +105,13 @@ API provides HTTP REST API for Orvosi application.
 - Ask the other contributors to review.
 
 - Once your PR is approved and its pipeline status is green, ask the owner to merge your PR.
+
+## Request Flows, Endpoints, and Dependencies
+
+## Request Flows
+
+### Sign-in with Google
+
+![orvosi-sign_in](https://user-images.githubusercontent.com/4661221/106688293-65ddcd00-6600-11eb-8a57-63b5feca37df.png)
+
+
