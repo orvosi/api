@@ -19,4 +19,9 @@ API provides HTTP REST API for Orvosi application.
   - GET /medical-records: TBD
   - GET /medical-records/:id: TBD
   - PUT /medical-records: TBD
+
+## Architecture Diagram
+
+![orvosi-api](https://user-images.githubusercontent.com/4661221/106680454-43908300-65f1-11eb-9f60-c92e900d99f9.png)
+
   
