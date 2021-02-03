@@ -116,7 +116,7 @@ API provides HTTP REST API for Orvosi application.
 
 ### Create a medical record
 
-![orvosi-create_medical_record](https://user-images.githubusercontent.com/4661221/106689102-008adb80-6602-11eb-8965-3f3546c41c0f.png)
+![orvosi-create_medical_record](https://user-images.githubusercontent.com/4661221/106691158-98d68f80-6605-11eb-941b-3128934b57b8.png)
 
 ### Get user's medical records
 
