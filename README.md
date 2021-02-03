@@ -79,3 +79,29 @@ API provides HTTP REST API for Orvosi application.
     ```
     make migrate url=postgres://user:password@localhost:5432/orvosi
     ```
+
+### Development Guide
+
+- Fork the project
+
+- Create a meaningful branch
+
+    ```
+    git checkout -b <your-goal>
+    ```
+    e.g:
+    ```
+    git checkout -b strenghten-security-on-sign-in-process
+    ```
+
+- Create some changes and their tests (unit test and any test if any).
+
+- Make sure to have unit test coverage at least 90%. There will be times when the code is quite hard to test. Please, explain it in your Pull Request.
+
+- Push the changes to repository.
+
+- Create Pull Request (PR) for your branch. In your PR's description, please explain the goal of the PR and its changes.
+
+- Ask the other contributors to review.
+
+- Once your PR is approved and its pipeline status is green, ask the owner to merge your PR.
