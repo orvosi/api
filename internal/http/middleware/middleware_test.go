@@ -112,6 +112,55 @@ func TestWithJWTDecoder(t *testing.T) {
 	})
 }
 
+func TestWithContentType(t *testing.T) {
+	t.Run("request can't be continued due to wrong content type", func(t *testing.T) {
+		tables := []struct {
+			expected string
+			actual   string
+		}{
+			{echo.MIMEApplicationForm, echo.MIMEApplicationJSON},
+			{echo.MIMEApplicationJSON, echo.MIMEApplicationJavaScriptCharsetUTF8},
+			{echo.MIMEApplicationJSON, echo.MIMEApplicationProtobuf},
+			{echo.MIMETextXML, echo.MIMEMultipartForm},
+		}
+
+		for _, table := range tables {
+			req := httptest.NewRequest(http.MethodPost, "/", nil)
+			req.Header.Set(echo.HeaderContentType, table.actual)
+			rec := httptest.NewRecorder()
+
+			e := echo.New()
+			ctx := e.NewContext(req, rec)
+
+			hdr := createHandler()
+			hdr = middleware.WithContentType(table.expected)(hdr)
+
+			err := hdr(ctx)
+
+			assert.NotNil(t, err)
+			assert.Equal(t, entity.ErrWrongContentType, err)
+			assert.Equal(t, http.StatusBadRequest, rec.Code)
+		}
+	})
+
+	t.Run("successfully continue the request when content-type is right", func(t *testing.T) {
+		req := httptest.NewRequest(http.MethodPost, "/", nil)
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		rec := httptest.NewRecorder()
+
+		e := echo.New()
+		ctx := e.NewContext(req, rec)
+
+		hdr := createHandler()
+		hdr = middleware.WithContentType(echo.MIMEApplicationJSON)(hdr)
+
+		err := hdr(ctx)
+
+		assert.Nil(t, err)
+		assert.Equal(t, http.StatusOK, rec.Code)
+	})
+}
+
 func createErrorDecoder() middleware.JWTDecoder {
 	return func(token string) (*entity.User, *entity.Error) {
 		return nil, entity.ErrUnauthorized
