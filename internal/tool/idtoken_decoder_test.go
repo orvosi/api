@@ -26,7 +26,7 @@ func TestIDTokenDecoder_Decode(t *testing.T) {
 		user, err := dec.Decode(token)
 
 		assert.NotNil(t, err)
-		assert.Equal(t, entity.ErrInvalidGoogleToken, err)
+		assert.Equal(t, entity.ErrInvalidGoogleToken.Code, err.Code)
 		assert.Nil(t, user)
 	})
 }
