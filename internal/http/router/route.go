@@ -10,4 +10,6 @@ type Route struct {
 	Path string
 	// Handler defines the handler for the route.
 	Handler echo.HandlerFunc
+	// Middlewares defines the list of middleware used for the route.
+	Middlewares []echo.MiddlewareFunc
 }
