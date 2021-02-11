@@ -66,6 +66,9 @@ func (err *Error) Error() string {
 // The message will be put in internalMessage attribute
 // and can be accessed via Error() method.
 func WrapError(err *Error, message string) *Error {
-	err.internalMessage = fmt.Sprintf("%s. %s", err.internalMessage, message)
-	return err
+	return &Error{
+		Code:            err.Code,
+		Message:         err.Message,
+		internalMessage: fmt.Sprintf("%s. %s", err.internalMessage, message),
+	}
 }
