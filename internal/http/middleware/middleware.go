@@ -21,8 +21,9 @@ const (
 	// to save a user information in context.
 	ContextKeyUser = ContextKey("user")
 
-	authHeaderKey = "Authorization"
-	authBearerKey = "Bearer"
+	authHeaderKey     = "Authorization"
+	authBearerKey     = "Bearer"
+	headerContentType = "Content-Type"
 )
 
 // JWTDecoder defines the function contract to decode JWT.
@@ -53,6 +54,22 @@ func WithJWTDecoder(decoder JWTDecoder) echo.MiddlewareFunc {
 			req := ctx.Request().Clone(reqCtx)
 			ctx.SetRequest(req)
 
+			return next(ctx)
+		}
+	}
+}
+
+// WithContentType checks if the request contains header with key Content-Type
+// and value that is expected. The expected value is set from contentType parameter.
+func WithContentType(contentType string) echo.MiddlewareFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(ctx echo.Context) error {
+			content := ctx.Request().Header.Get(headerContentType)
+			if content != contentType {
+				res := response.NewError(entity.ErrWrongContentType)
+				ctx.JSON(http.StatusBadRequest, res)
+				return entity.ErrWrongContentType
+			}
 			return next(ctx)
 		}
 	}
