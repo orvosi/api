@@ -3,7 +3,9 @@ package router
 import (
 	"net/http"
 
+	"github.com/labstack/echo/v4"
 	"github.com/orvosi/api/internal/http/handler"
+	"github.com/orvosi/api/internal/http/middleware"
 )
 
 // MedicalRecordCreator creates routes for medical record creator.
@@ -11,9 +13,10 @@ func MedicalRecordCreator(h *handler.MedicalRecordCreator) []*Route {
 	var routes []*Route
 
 	r := &Route{
-		Method:  http.MethodPost,
-		Path:    "/medical-records",
-		Handler: h.Create,
+		Method:      http.MethodPost,
+		Path:        "/medical-records",
+		Handler:     h.Create,
+		Middlewares: []echo.MiddlewareFunc{middleware.WithContentType(echo.MIMEApplicationJSON)},
 	}
 
 	routes = append(routes, r)
@@ -45,9 +48,10 @@ func MedicalRecordUpdater(h *handler.MedicalRecordUpdater) []*Route {
 	var routes []*Route
 
 	r := &Route{
-		Method:  http.MethodPut,
-		Path:    "/medical-records/:id",
-		Handler: h.Update,
+		Method:      http.MethodPut,
+		Path:        "/medical-records/:id",
+		Handler:     h.Update,
+		Middlewares: []echo.MiddlewareFunc{middleware.WithContentType(echo.MIMEApplicationJSON)},
 	}
 
 	routes = append(routes, r)
