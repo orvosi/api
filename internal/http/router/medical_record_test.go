@@ -24,6 +24,7 @@ func TestMedicalRecordCreatorRoutes(t *testing.T) {
 
 		for _, route := range routes {
 			assert.Equal(t, desired[route.Path], route.Method)
+			assert.NotEmpty(t, route.Middlewares)
 		}
 	})
 }
@@ -43,6 +44,7 @@ func TestMedicalRecordFinderRoutes(t *testing.T) {
 
 		for _, route := range routes {
 			assert.Equal(t, desired[route.Path], route.Method)
+			assert.Empty(t, route.Middlewares)
 		}
 	})
 }
@@ -61,6 +63,7 @@ func TestMedicalRecordUpdaterRoutes(t *testing.T) {
 
 		for _, route := range routes {
 			assert.Equal(t, desired[route.Path], route.Method)
+			assert.NotEmpty(t, route.Middlewares)
 		}
 	})
 }
