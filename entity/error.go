@@ -15,6 +15,8 @@ var (
 	ErrInvalidGoogleToken = NewError("01-003", "Google ID Token is invalid")
 	// ErrInvalidID is returned when the entity id can't be decoded or invalid.
 	ErrInvalidID = NewError("01-004", "Entity ID is invalid")
+	// ErrWrongContentType is returned when content-type in request's header is not as expected.
+	ErrWrongContentType = NewError("01-005", "Wrong content type")
 
 	// ErrEmptyMedicalRecord indicates that a medical record is empty or null.
 	ErrEmptyMedicalRecord = NewError("02-001", "MedicalRecord is empty")
