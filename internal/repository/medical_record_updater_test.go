@@ -34,7 +34,7 @@ func TestMedicalRecordUpdater_DoesRecordExist(t *testing.T) {
 		found, err := exec.repo.DoesRecordExist(context.Background(), uint64(1), "dummy@dummy.com")
 
 		assert.NotNil(t, err)
-		assert.Equal(t, entity.ErrInternalServer, err)
+		assert.Equal(t, entity.ErrInternalServer.Code, err.Code)
 		assert.False(t, found)
 	})
 
@@ -73,7 +73,7 @@ func TestMedicalRecordUpdater_Update(t *testing.T) {
 		err := exec.repo.Update(context.Background(), uint64(1), createValidMedicalRecord())
 
 		assert.NotNil(t, err)
-		assert.Equal(t, entity.ErrInternalServer, err)
+		assert.Equal(t, entity.ErrInternalServer.Code, err.Code)
 	})
 
 	t.Run("successfully update the medical record", func(t *testing.T) {

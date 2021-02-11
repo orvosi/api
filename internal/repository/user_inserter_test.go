@@ -45,7 +45,7 @@ func TestUserInserter_InsertOrIgnore(t *testing.T) {
 		err := exec.repo.InsertOrIgnore(context.Background(), user)
 
 		assert.NotNil(t, err)
-		assert.Equal(t, entity.ErrInternalServer, err)
+		assert.Equal(t, entity.ErrInternalServer.Code, err.Code)
 	})
 
 	t.Run("successfully insert or ignore user", func(t *testing.T) {

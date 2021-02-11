@@ -45,7 +45,7 @@ func TestMedicalRecordInserter_Insert(t *testing.T) {
 		err := exec.repo.Insert(context.Background(), record)
 
 		assert.NotNil(t, err)
-		assert.Equal(t, entity.ErrInternalServer, err)
+		assert.Equal(t, entity.ErrInternalServer.Code, err.Code)
 	})
 
 	t.Run("successfully insert a new medical record", func(t *testing.T) {
