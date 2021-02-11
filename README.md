@@ -120,6 +120,10 @@ See [Request Flows](https://github.com/orvosi/api/blob/master/doc/REQUEST-FLOWS.
 
 See [Endpoints](https://github.com/orvosi/api/blob/master/doc/ENDPOINTS.md)
 
+## Code Map
+
+See [Code Map](https://github.com/orvosi/api/blob/master/doc/CODE-MAP.md)
+
 ## Dependencies
 
 - PostgreSQL
