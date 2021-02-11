@@ -20,7 +20,10 @@ func NewServer(jwtDecoder echo.MiddlewareFunc, routes []*router.Route) *Server {
 	e.Use(middleware.CORS())
 
 	for _, route := range routes {
-		e.Add(route.Method, route.Path, route.Handler, jwtDecoder)
+		var midds []echo.MiddlewareFunc
+		midds = append(midds, jwtDecoder)
+		midds = append(midds, route.Middlewares...)
+		e.Add(route.Method, route.Path, route.Handler, midds...)
 	}
 
 	return &Server{e}
