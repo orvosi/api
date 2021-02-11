@@ -48,6 +48,14 @@ func TestError_Error(t *testing.T) {
 }
 
 func TestWrapError(t *testing.T) {
+	t.Run("new error has the same code and public message as base", func(t *testing.T) {
+		ori := entity.NewError("01-001", "initial message")
+
+		err := entity.WrapError(ori, "additional message #1")
+		assert.Equal(t, ori.Code, err.Code)
+		assert.Equal(t, ori.Message, err.Message)
+	})
+
 	t.Run("message is wrapped exactly at the end of current message and separated by :", func(t *testing.T) {
 		err := entity.NewError("01-001", "initial message")
 
