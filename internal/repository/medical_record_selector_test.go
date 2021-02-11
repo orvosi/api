@@ -35,7 +35,7 @@ func TestMedicalRecordSelector_FindByID(t *testing.T) {
 		res, err := exec.repo.FindByID(context.Background(), uint64(1))
 
 		assert.NotNil(t, err)
-		assert.Equal(t, entity.ErrInternalServer, err)
+		assert.Equal(t, entity.ErrInternalServer.Code, err.Code)
 		assert.Empty(t, res)
 	})
 
@@ -81,7 +81,7 @@ func TestMedicalRecordSelector_FindByEmail(t *testing.T) {
 		res, err := exec.repo.FindByEmail(context.Background(), "dummy@dummy.com")
 
 		assert.NotNil(t, err)
-		assert.Equal(t, entity.ErrInternalServer, err)
+		assert.Equal(t, entity.ErrInternalServer.Code, err.Code)
 		assert.Empty(t, res)
 	})
 
