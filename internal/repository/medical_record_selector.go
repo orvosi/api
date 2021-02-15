@@ -35,7 +35,7 @@ func (ms *MedicalRecordSelector) FindByID(ctx context.Context, id uint64) (*enti
 
 // FindByEmail finds all medical records bounded to specific email.
 func (ms *MedicalRecordSelector) FindByEmail(ctx context.Context, email string) ([]*entity.MedicalRecord, *entity.Error) {
-	query := "SELECT id, symptom, diagnosis, therapy, result, created_at, created_by, updated_at, updated_by FROM medical_records WHERE email = $1 ORDER BY id ASC"
+	query := "SELECT id, symptom, diagnosis, therapy, result, created_at, created_by, updated_at, updated_by FROM medical_records WHERE email = $1 ORDER BY id DESC"
 	rows, err := ms.db.QueryContext(ctx, query, email)
 	if err != nil {
 		return []*entity.MedicalRecord{}, entity.WrapError(entity.ErrInternalServer, err.Error())
