@@ -16,7 +16,7 @@ None
 
 ### Success Response
 
-```
+```json
 {
     "data": null,
     "meta": {}
@@ -25,7 +25,7 @@ None
 
 ### Error Response
 
-```
+```json
 {
     "errors": [
         {
@@ -45,7 +45,7 @@ Bearer token
 
 ### Request Body
 
-```
+```json
 {
     "symptom": string,
     "diagnosis": string,
@@ -59,7 +59,7 @@ None
 
 ### Success Response
 
-```
+```json
 {
     "data": null,
     "meta": {}
@@ -68,7 +68,7 @@ None
 
 ### Error Response
 
-```
+```json
 {
     "errors": [
         {
@@ -96,7 +96,7 @@ None
 
 ### Success Response
 
-```
+```json
 {
     "data": [
         {
@@ -117,7 +117,7 @@ None
 
 ### Error Response
 
-```
+```json
 {
     "errors": [
         {
@@ -145,7 +145,7 @@ None
 
 ### Success Response
 
-```
+```json
 {
     "data": {
         "id": string,
@@ -164,7 +164,7 @@ None
 
 ### Error Response
 
-```
+```json
 {
     "errors": [
         {
@@ -184,7 +184,7 @@ Bearer token
 
 ### Request Body
 
-```
+```json
 {
     "symptom": string,
     "diagnosis": string,
@@ -199,7 +199,7 @@ None
 
 ### Success Response
 
-```
+```json
 {
     "data": null,
     "meta": {}
@@ -208,7 +208,7 @@ None
 
 ### Error Response
 
-```
+```json
 {
     "errors": [
         {
