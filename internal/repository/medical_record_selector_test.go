@@ -75,7 +75,7 @@ func TestMedicalRecordSelector_FindByEmail(t *testing.T) {
 	t.Run("select query returns error", func(t *testing.T) {
 		exec := createMedicalRecordSelectorExecutor()
 
-		exec.sql.ExpectQuery(`SELECT id, symptom, diagnosis, therapy, result, created_at, created_by, updated_at, updated_by FROM medical_records WHERE email = \$1 ORDER BY id ASC`).
+		exec.sql.ExpectQuery(`SELECT id, symptom, diagnosis, therapy, result, created_at, created_by, updated_at, updated_by FROM medical_records WHERE email = \$1 ORDER BY id DESC`).
 			WillReturnError(errors.New("fail to select from database"))
 
 		res, err := exec.repo.FindByEmail(context.Background(), "dummy@dummy.com")
@@ -88,7 +88,7 @@ func TestMedicalRecordSelector_FindByEmail(t *testing.T) {
 	t.Run("row scan returns error", func(t *testing.T) {
 		exec := createMedicalRecordSelectorExecutor()
 
-		exec.sql.ExpectQuery(`SELECT id, symptom, diagnosis, therapy, result, created_at, created_by, updated_at, updated_by FROM medical_records WHERE email = \$1 ORDER BY id ASC`).
+		exec.sql.ExpectQuery(`SELECT id, symptom, diagnosis, therapy, result, created_at, created_by, updated_at, updated_by FROM medical_records WHERE email = \$1 ORDER BY id DESC`).
 			WillReturnRows(sqlmock.
 				NewRows([]string{"id", "symptom", "diagnosis", "therapy", "result", "created_at", "created_by", "updated_at", "updated_by"}).
 				AddRow(1, "Symptom", "Diagnosis", "Therapy", "Result", time.Now(), "dummy@dummy.com", time.Now(), "dummy@dummy.com").
@@ -105,7 +105,7 @@ func TestMedicalRecordSelector_FindByEmail(t *testing.T) {
 	t.Run("successfully retrieve all rows", func(t *testing.T) {
 		exec := createMedicalRecordSelectorExecutor()
 
-		exec.sql.ExpectQuery(`SELECT id, symptom, diagnosis, therapy, result, created_at, created_by, updated_at, updated_by FROM medical_records WHERE email = \$1 ORDER BY id ASC`).
+		exec.sql.ExpectQuery(`SELECT id, symptom, diagnosis, therapy, result, created_at, created_by, updated_at, updated_by FROM medical_records WHERE email = \$1 ORDER BY id DESC`).
 			WillReturnRows(sqlmock.
 				NewRows([]string{"id", "symptom", "diagnosis", "therapy", "result", "created_at", "created_by", "updated_at", "updated_by"}).
 				AddRow(1, "Symptom", "Diagnosis", "Therapy", "Result", time.Now(), "dummy@dummy.com", time.Now(), "dummy@dummy.com").
