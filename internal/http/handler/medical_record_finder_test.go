@@ -24,7 +24,7 @@ type MedicalRecordFinder_Executor struct {
 }
 
 const (
-	maxUint64 = 1<<64 - 1
+	maxUint64 = 1<<32 - 1
 )
 
 func TestNewMedicalRecordFinder(t *testing.T) {
