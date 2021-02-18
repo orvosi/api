@@ -30,6 +30,8 @@ var (
 	ErrInvalidEmail = NewError("02-004", "Email is invalid. Please, check the email")
 	// ErrMedicalRecordNotFound indicates that the medical record can't be found.
 	ErrMedicalRecordNotFound = NewError("02-005", "Medical record not found")
+	// ErrInvalidParam indicates that the query param(s) is invalid.
+	ErrInvalidParam = NewError("02-006", "Query param(s) is invalid")
 
 	// ErrEmptyUser indicates that a user is empty or null.
 	ErrEmptyUser = NewError("03-001", "User is empty")
