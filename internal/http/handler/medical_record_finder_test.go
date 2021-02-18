@@ -156,21 +156,24 @@ func TestMedicalRecordFinder_FindByEmail(t *testing.T) {
 		assert.Equal(t, str, rec.Body.String())
 	})
 
-	t.Run("query param 'from' is not integer", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodGet, "/medical-records?from=abc", nil)
-		user := createUserInformation()
-		req = req.WithContext(context.WithValue(context.Background(), middleware.ContextKeyUser, user))
+	t.Run("query param 'from' is invalid", func(t *testing.T) {
+		paths := []string{"/medical-records?from=abc", "/medical-records?from=-10", "/medical-records?from=-12345"}
+		for _, path := range paths {
+			req := httptest.NewRequest(http.MethodGet, path, nil)
+			user := createUserInformation()
+			req = req.WithContext(context.WithValue(context.Background(), middleware.ContextKeyUser, user))
 
-		rec := httptest.NewRecorder()
-		e := echo.New()
-		ctx := e.NewContext(req, rec)
+			rec := httptest.NewRecorder()
+			e := echo.New()
+			ctx := e.NewContext(req, rec)
 
-		exec := createMedicalRecordFinderExecutor(ctrl)
-		exec.handler.FindByEmail(ctx)
+			exec := createMedicalRecordFinderExecutor(ctrl)
+			exec.handler.FindByEmail(ctx)
 
-		assert.Equal(t, http.StatusBadRequest, rec.Code)
-		str := fmt.Sprintf("%s\n", `{"errors":[{"code":"02-006","message":"Query param(s) is invalid"}],"meta":null}`)
-		assert.Equal(t, str, rec.Body.String())
+			assert.Equal(t, http.StatusBadRequest, rec.Code)
+			str := fmt.Sprintf("%s\n", `{"errors":[{"code":"02-006","message":"Query param(s) is invalid"}],"meta":null}`)
+			assert.Equal(t, str, rec.Body.String())
+		}
 	})
 
 	t.Run("finder service returns 4xx error", func(t *testing.T) {
