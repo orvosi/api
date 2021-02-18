@@ -9,6 +9,8 @@ import (
 	"github.com/orvosi/api/entity"
 )
 
+const defaultLimit = 10
+
 var emailRegex = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
 
 // FindMedicalRecord defines the business logic
@@ -19,7 +21,8 @@ type FindMedicalRecord interface {
 	// If the medical record is not owned by the user, it will return ErrUnauthorized.
 	FindByID(ctx context.Context, id uint64, email string) (*entity.MedicalRecord, *entity.Error)
 	// FindByEmail finds medical records that belong to specific user (based on email).
-	FindByEmail(ctx context.Context, email string) ([]*entity.MedicalRecord, *entity.Error)
+	// It also receives `from` which defines the starting point of the records.
+	FindByEmail(ctx context.Context, email string, from uint64) ([]*entity.MedicalRecord, *entity.Error)
 }
 
 // FindMedicalRecordRepository defines the business logic
@@ -28,7 +31,7 @@ type FindMedicalRecordRepository interface {
 	// FindByID finds medical records by its id.
 	FindByID(ctx context.Context, id uint64) (*entity.MedicalRecord, *entity.Error)
 	// FindByEmail finds all medical records bounded to specific email.
-	FindByEmail(ctx context.Context, email string) ([]*entity.MedicalRecord, *entity.Error)
+	FindByEmail(ctx context.Context, email string, from uint64, limit uint) ([]*entity.MedicalRecord, *entity.Error)
 }
 
 // MedicalRecordFinder responsibles for medical record find workflow.
@@ -60,12 +63,12 @@ func (mf *MedicalRecordFinder) FindByID(ctx context.Context, id uint64, email st
 
 // FindByEmail finds medical records that belong to specific user (based on email).
 // The email will be verified first using regex and LookupMX.
-func (mf *MedicalRecordFinder) FindByEmail(ctx context.Context, email string) ([]*entity.MedicalRecord, *entity.Error) {
+func (mf *MedicalRecordFinder) FindByEmail(ctx context.Context, email string, from uint64) ([]*entity.MedicalRecord, *entity.Error) {
 	if err := validateEmail(email); err != nil {
 		return []*entity.MedicalRecord{}, entity.ErrInvalidEmail
 	}
 
-	return mf.repo.FindByEmail(ctx, email)
+	return mf.repo.FindByEmail(ctx, email, from, defaultLimit)
 }
 
 func validateEmail(email string) *entity.Error {
