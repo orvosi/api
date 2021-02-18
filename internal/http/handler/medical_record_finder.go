@@ -12,6 +12,14 @@ import (
 	"github.com/orvosi/api/usecase"
 )
 
+const (
+	maxUint64 = 1<<64 - 1
+)
+
+var (
+	maxUint64Str = strconv.FormatUint(maxUint64, 10)
+)
+
 // MedicalRecordResponse defines the JSON response of medical record.
 type MedicalRecordResponse struct {
 	ID        hashids.ID `json:"id"`
@@ -86,7 +94,7 @@ func (mf *MedicalRecordFinder) FindByEmail(ctx echo.Context) error {
 
 	formStr := ctx.QueryParam("from")
 	if formStr == "" {
-		formStr = "0"
+		formStr = maxUint64Str
 	}
 	from, serr := strconv.ParseUint(formStr, 10, 64)
 	if serr != nil {
