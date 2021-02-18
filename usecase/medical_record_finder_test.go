@@ -70,7 +70,7 @@ func TestMedicalRecordFinder_FindByEmail(t *testing.T) {
 	t.Run("email doesn't contain username", func(t *testing.T) {
 		exec := createMedicalRecordFinderExecutor(ctrl)
 
-		res, err := exec.usecase.FindByEmail(context.Background(), "@dummy.com")
+		res, err := exec.usecase.FindByEmail(context.Background(), "@dummy.com", 0)
 
 		assert.NotNil(t, err)
 		assert.Equal(t, entity.ErrInvalidEmail, err)
@@ -80,7 +80,7 @@ func TestMedicalRecordFinder_FindByEmail(t *testing.T) {
 	t.Run("email doesn't contain domain", func(t *testing.T) {
 		exec := createMedicalRecordFinderExecutor(ctrl)
 
-		res, err := exec.usecase.FindByEmail(context.Background(), "dummy@")
+		res, err := exec.usecase.FindByEmail(context.Background(), "dummy@", 0)
 
 		assert.NotNil(t, err)
 		assert.Equal(t, entity.ErrInvalidEmail, err)
@@ -90,7 +90,7 @@ func TestMedicalRecordFinder_FindByEmail(t *testing.T) {
 	t.Run("email contains made-up domain", func(t *testing.T) {
 		exec := createMedicalRecordFinderExecutor(ctrl)
 
-		res, err := exec.usecase.FindByEmail(context.Background(), "dummy@dummy-domain.com")
+		res, err := exec.usecase.FindByEmail(context.Background(), "dummy@dummy-domain.com", 0)
 
 		assert.NotNil(t, err)
 		assert.Equal(t, entity.ErrInvalidEmail, err)
@@ -100,8 +100,8 @@ func TestMedicalRecordFinder_FindByEmail(t *testing.T) {
 	t.Run("repo returns error", func(t *testing.T) {
 		exec := createMedicalRecordFinderExecutor(ctrl)
 
-		exec.repo.EXPECT().FindByEmail(context.Background(), "dummy@dummy.com").Return([]*entity.MedicalRecord{}, entity.ErrInternalServer)
-		res, err := exec.usecase.FindByEmail(context.Background(), "dummy@dummy.com")
+		exec.repo.EXPECT().FindByEmail(context.Background(), "dummy@dummy.com", uint64(0), uint(10)).Return([]*entity.MedicalRecord{}, entity.ErrInternalServer)
+		res, err := exec.usecase.FindByEmail(context.Background(), "dummy@dummy.com", 0)
 
 		assert.NotNil(t, err)
 		assert.Equal(t, entity.ErrInternalServer, err)
@@ -111,8 +111,8 @@ func TestMedicalRecordFinder_FindByEmail(t *testing.T) {
 	t.Run("successfully find medical records bounded to specific email", func(t *testing.T) {
 		exec := createMedicalRecordFinderExecutor(ctrl)
 
-		exec.repo.EXPECT().FindByEmail(context.Background(), "dummy@dummy.com").Return([]*entity.MedicalRecord{&entity.MedicalRecord{}}, nil)
-		res, err := exec.usecase.FindByEmail(context.Background(), "dummy@dummy.com")
+		exec.repo.EXPECT().FindByEmail(context.Background(), "dummy@dummy.com", uint64(0), uint(10)).Return([]*entity.MedicalRecord{&entity.MedicalRecord{}}, nil)
+		res, err := exec.usecase.FindByEmail(context.Background(), "dummy@dummy.com", 0)
 
 		assert.Nil(t, err)
 		assert.NotEmpty(t, res)
