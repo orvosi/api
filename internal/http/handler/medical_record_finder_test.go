@@ -23,6 +23,10 @@ type MedicalRecordFinder_Executor struct {
 	usecase *mock_usecase.MockFindMedicalRecord
 }
 
+const (
+	maxUint64 = 1<<64 - 1
+)
+
 func TestNewMedicalRecordFinder(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -218,7 +222,7 @@ func TestMedicalRecordFinder_FindByEmail(t *testing.T) {
 			param uint64
 		}{
 			{"/medical-records?from=100", 100},
-			{"/medical-records", 0},
+			{"/medical-records", maxUint64},
 			{"/medical-records?from=0", 0},
 		}
 
