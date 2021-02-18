@@ -2,7 +2,6 @@ package handler
 
 import (
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/indrasaputra/hashids"
@@ -14,10 +13,6 @@ import (
 
 const (
 	maxUint64 = 1<<32 - 1
-)
-
-var (
-	maxUint64Str = strconv.FormatUint(maxUint64, 10)
 )
 
 // MedicalRecordResponse defines the JSON response of medical record.
@@ -92,15 +87,11 @@ func (mf *MedicalRecordFinder) FindByEmail(ctx echo.Context) error {
 		return cerr
 	}
 
-	formStr := ctx.QueryParam("from")
-	if formStr == "" {
-		formStr = maxUint64Str
-	}
-	from, serr := strconv.ParseUint(formStr, 10, 64)
-	if serr != nil {
-		res := response.NewError(entity.ErrInvalidParam)
+	from, qerr := extractQueryParam(ctx.QueryParam("from"))
+	if qerr != nil {
+		res := response.NewError(qerr)
 		ctx.JSON(http.StatusBadRequest, res)
-		return serr
+		return qerr
 	}
 
 	records, ferr := mf.finder.FindByEmail(ctx.Request().Context(), user.Email, from)
@@ -117,6 +108,18 @@ func (mf *MedicalRecordFinder) FindByEmail(ctx echo.Context) error {
 	res := createMedicalRecordResponses(records)
 	ctx.JSON(http.StatusOK, response.NewSuccess(res, response.EmptyMeta{}))
 	return nil
+}
+
+func extractQueryParam(param string) (uint64, *entity.Error) {
+	if param == "" {
+		return maxUint64, nil
+	}
+
+	from, serr := hashids.DecodeHash([]byte(param))
+	if serr != nil {
+		return 0, entity.ErrInvalidParam
+	}
+	return uint64(from), nil
 }
 
 func createMedicalRecordResponses(mrs []*entity.MedicalRecord) []*MedicalRecordResponse {
