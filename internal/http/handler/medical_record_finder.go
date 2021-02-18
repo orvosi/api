@@ -86,7 +86,7 @@ func (mf *MedicalRecordFinder) FindByEmail(ctx echo.Context) error {
 
 	from, serr := strconv.ParseUint(ctx.QueryParam("from"), 10, 64)
 	if serr != nil {
-		res := response.NewError(serr)
+		res := response.NewError(entity.ErrInvalidParam)
 		ctx.JSON(http.StatusBadRequest, res)
 		return serr
 	}
