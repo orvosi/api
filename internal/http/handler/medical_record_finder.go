@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/indrasaputra/hashids"
@@ -83,7 +84,14 @@ func (mf *MedicalRecordFinder) FindByEmail(ctx echo.Context) error {
 		return cerr
 	}
 
-	records, ferr := mf.finder.FindByEmail(ctx.Request().Context(), user.Email)
+	from, serr := strconv.ParseUint(ctx.QueryParam("from"), 10, 64)
+	if serr != nil {
+		res := response.NewError(serr)
+		ctx.JSON(http.StatusBadRequest, res)
+		return serr
+	}
+
+	records, ferr := mf.finder.FindByEmail(ctx.Request().Context(), user.Email, from)
 	if ferr != nil {
 		res := response.NewError(ferr)
 		status := http.StatusInternalServerError
