@@ -213,22 +213,33 @@ func TestMedicalRecordFinder_FindByEmail(t *testing.T) {
 	})
 
 	t.Run("successfully get medical records from certain user (email)", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodGet, "/medical-records?from=100", nil)
-		user := createUserInformation()
-		req = req.WithContext(context.WithValue(context.Background(), middleware.ContextKeyUser, user))
+		tables := []struct {
+			path  string
+			param uint64
+		}{
+			{"/medical-records?from=100", 100},
+			{"/medical-records", 0},
+			{"/medical-records?from=0", 0},
+		}
 
-		rec := httptest.NewRecorder()
-		e := echo.New()
-		ctx := e.NewContext(req, rec)
+		for _, table := range tables {
+			req := httptest.NewRequest(http.MethodGet, table.path, nil)
+			user := createUserInformation()
+			req = req.WithContext(context.WithValue(context.Background(), middleware.ContextKeyUser, user))
 
-		exec := createMedicalRecordFinderExecutor(ctrl)
-		mrs := createMedicalRecords()
-		exec.usecase.EXPECT().FindByEmail(ctx.Request().Context(), user.Email, uint64(100)).Return(mrs, nil)
-		exec.handler.FindByEmail(ctx)
+			rec := httptest.NewRecorder()
+			e := echo.New()
+			ctx := e.NewContext(req, rec)
 
-		assert.Equal(t, http.StatusOK, rec.Code)
-		str := fmt.Sprintf("%s\n", `{"data":[{"id":"oWx0b8DZ1a","symptom":"Symptom","diagnosis":"Diagnosis","therapy":"Therapy","result":"Result","created_by":"user@dummy.com","created_at":"2021-01-28T15:00:00Z","updated_by":"user@dummy.com","updated_at":"2021-01-28T15:00:00Z"}],"meta":{}}`)
-		assert.Equal(t, str, rec.Body.String())
+			exec := createMedicalRecordFinderExecutor(ctrl)
+			mrs := createMedicalRecords()
+			exec.usecase.EXPECT().FindByEmail(ctx.Request().Context(), user.Email, table.param).Return(mrs, nil)
+			exec.handler.FindByEmail(ctx)
+
+			assert.Equal(t, http.StatusOK, rec.Code)
+			str := fmt.Sprintf("%s\n", `{"data":[{"id":"oWx0b8DZ1a","symptom":"Symptom","diagnosis":"Diagnosis","therapy":"Therapy","result":"Result","created_by":"user@dummy.com","created_at":"2021-01-28T15:00:00Z","updated_by":"user@dummy.com","updated_at":"2021-01-28T15:00:00Z"}],"meta":{}}`)
+			assert.Equal(t, str, rec.Body.String())
+		}
 	})
 }
 
