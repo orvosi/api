@@ -75,10 +75,10 @@ func TestMedicalRecordSelector_FindByEmail(t *testing.T) {
 	t.Run("select query returns error", func(t *testing.T) {
 		exec := createMedicalRecordSelectorExecutor()
 
-		exec.sql.ExpectQuery(`SELECT id, symptom, diagnosis, therapy, result, created_at, created_by, updated_at, updated_by FROM medical_records WHERE email = \$1 ORDER BY id DESC`).
+		exec.sql.ExpectQuery(`SELECT id, symptom, diagnosis, therapy, result, created_at, created_by, updated_at, updated_by FROM medical_records WHERE email = \$1 AND id < \$2 ORDER BY created_at DESC LIMIT \$3`).
 			WillReturnError(errors.New("fail to select from database"))
 
-		res, err := exec.repo.FindByEmail(context.Background(), "dummy@dummy.com")
+		res, err := exec.repo.FindByEmail(context.Background(), "dummy@dummy.com", 100, 10)
 
 		assert.NotNil(t, err)
 		assert.Equal(t, entity.ErrInternalServer.Code, err.Code)
@@ -88,14 +88,14 @@ func TestMedicalRecordSelector_FindByEmail(t *testing.T) {
 	t.Run("row scan returns error", func(t *testing.T) {
 		exec := createMedicalRecordSelectorExecutor()
 
-		exec.sql.ExpectQuery(`SELECT id, symptom, diagnosis, therapy, result, created_at, created_by, updated_at, updated_by FROM medical_records WHERE email = \$1 ORDER BY id DESC`).
+		exec.sql.ExpectQuery(`SELECT id, symptom, diagnosis, therapy, result, created_at, created_by, updated_at, updated_by FROM medical_records WHERE email = \$1 AND id < \$2 ORDER BY created_at DESC LIMIT \$3`).
 			WillReturnRows(sqlmock.
 				NewRows([]string{"id", "symptom", "diagnosis", "therapy", "result", "created_at", "created_by", "updated_at", "updated_by"}).
 				AddRow(1, "Symptom", "Diagnosis", "Therapy", "Result", time.Now(), "dummy@dummy.com", time.Now(), "dummy@dummy.com").
 				AddRow(2, "Symptom", "Diagnosis", "Therapy", "Result", "time.Now()", "dummy@dummy.com", "time.Now()", "dummy@dummy.com"),
 			)
 
-		res, err := exec.repo.FindByEmail(context.Background(), "dummy@dummy.com")
+		res, err := exec.repo.FindByEmail(context.Background(), "dummy@dummy.com", 100, 10)
 
 		assert.Nil(t, err)
 		assert.NotEmpty(t, res)
@@ -105,14 +105,14 @@ func TestMedicalRecordSelector_FindByEmail(t *testing.T) {
 	t.Run("successfully retrieve all rows", func(t *testing.T) {
 		exec := createMedicalRecordSelectorExecutor()
 
-		exec.sql.ExpectQuery(`SELECT id, symptom, diagnosis, therapy, result, created_at, created_by, updated_at, updated_by FROM medical_records WHERE email = \$1 ORDER BY id DESC`).
+		exec.sql.ExpectQuery(`SELECT id, symptom, diagnosis, therapy, result, created_at, created_by, updated_at, updated_by FROM medical_records WHERE email = \$1 AND id < \$2 ORDER BY created_at DESC LIMIT \$3`).
 			WillReturnRows(sqlmock.
 				NewRows([]string{"id", "symptom", "diagnosis", "therapy", "result", "created_at", "created_by", "updated_at", "updated_by"}).
 				AddRow(1, "Symptom", "Diagnosis", "Therapy", "Result", time.Now(), "dummy@dummy.com", time.Now(), "dummy@dummy.com").
 				AddRow(2, "Symptom", "Diagnosis", "Therapy", "Result", time.Now(), "dummy@dummy.com", time.Now(), "dummy@dummy.com"),
 			)
 
-		res, err := exec.repo.FindByEmail(context.Background(), "dummy@dummy.com")
+		res, err := exec.repo.FindByEmail(context.Background(), "dummy@dummy.com", 100, 10)
 
 		assert.Nil(t, err)
 		assert.NotEmpty(t, res)
