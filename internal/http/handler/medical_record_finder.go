@@ -12,6 +12,8 @@ import (
 )
 
 const (
+	// it can't be set to 1<<64 - 1 due to postgres doesn't support high bit.
+	// therefore, we decrease the upper limit to max of signed 64 bit integer.
 	maxUint64 = 1<<32 - 1
 )
 
