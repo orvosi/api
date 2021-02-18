@@ -51,16 +51,16 @@ func (mr *MockFindMedicalRecordRepositoryMockRecorder) FindByID(ctx, id interfac
 }
 
 // FindByEmail mocks base method
-func (m *MockFindMedicalRecordRepository) FindByEmail(ctx context.Context, email string) ([]*entity.MedicalRecord, *entity.Error) {
+func (m *MockFindMedicalRecordRepository) FindByEmail(ctx context.Context, email string, from uint64, limit uint) ([]*entity.MedicalRecord, *entity.Error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FindByEmail", ctx, email)
+	ret := m.ctrl.Call(m, "FindByEmail", ctx, email, from, limit)
 	ret0, _ := ret[0].([]*entity.MedicalRecord)
 	ret1, _ := ret[1].(*entity.Error)
 	return ret0, ret1
 }
 
 // FindByEmail indicates an expected call of FindByEmail
-func (mr *MockFindMedicalRecordRepositoryMockRecorder) FindByEmail(ctx, email interface{}) *gomock.Call {
+func (mr *MockFindMedicalRecordRepositoryMockRecorder) FindByEmail(ctx, email, from, limit interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByEmail", reflect.TypeOf((*MockFindMedicalRecordRepository)(nil).FindByEmail), ctx, email)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByEmail", reflect.TypeOf((*MockFindMedicalRecordRepository)(nil).FindByEmail), ctx, email, from, limit)
 }
