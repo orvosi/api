@@ -156,8 +156,8 @@ func TestMedicalRecordFinder_FindByEmail(t *testing.T) {
 		assert.Equal(t, str, rec.Body.String())
 	})
 
-	t.Run("finder service returns 4xx error", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodGet, "/medical-records", nil)
+	t.Run("query param 'from' is not integer", func(t *testing.T) {
+		req := httptest.NewRequest(http.MethodGet, "/medical-records?from=abc", nil)
 		user := createUserInformation()
 		req = req.WithContext(context.WithValue(context.Background(), middleware.ContextKeyUser, user))
 
@@ -166,7 +166,24 @@ func TestMedicalRecordFinder_FindByEmail(t *testing.T) {
 		ctx := e.NewContext(req, rec)
 
 		exec := createMedicalRecordFinderExecutor(ctrl)
-		exec.usecase.EXPECT().FindByEmail(ctx.Request().Context(), user.Email).Return([]*entity.MedicalRecord{}, entity.ErrInvalidEmail)
+		exec.handler.FindByEmail(ctx)
+
+		assert.Equal(t, http.StatusBadRequest, rec.Code)
+		str := fmt.Sprintf("%s\n", `{"errors":[{"code":"02-006","message":"Query param(s) is invalid"}],"meta":null}`)
+		assert.Equal(t, str, rec.Body.String())
+	})
+
+	t.Run("finder service returns 4xx error", func(t *testing.T) {
+		req := httptest.NewRequest(http.MethodGet, "/medical-records?from=100", nil)
+		user := createUserInformation()
+		req = req.WithContext(context.WithValue(context.Background(), middleware.ContextKeyUser, user))
+
+		rec := httptest.NewRecorder()
+		e := echo.New()
+		ctx := e.NewContext(req, rec)
+
+		exec := createMedicalRecordFinderExecutor(ctrl)
+		exec.usecase.EXPECT().FindByEmail(ctx.Request().Context(), user.Email, uint64(100)).Return([]*entity.MedicalRecord{}, entity.ErrInvalidEmail)
 		exec.handler.FindByEmail(ctx)
 
 		assert.Equal(t, http.StatusBadRequest, rec.Code)
@@ -175,7 +192,7 @@ func TestMedicalRecordFinder_FindByEmail(t *testing.T) {
 	})
 
 	t.Run("finder service returns 5xx error", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodGet, "/medical-records", nil)
+		req := httptest.NewRequest(http.MethodGet, "/medical-records?from=100", nil)
 		user := createUserInformation()
 		req = req.WithContext(context.WithValue(context.Background(), middleware.ContextKeyUser, user))
 
@@ -184,7 +201,7 @@ func TestMedicalRecordFinder_FindByEmail(t *testing.T) {
 		ctx := e.NewContext(req, rec)
 
 		exec := createMedicalRecordFinderExecutor(ctrl)
-		exec.usecase.EXPECT().FindByEmail(ctx.Request().Context(), user.Email).Return([]*entity.MedicalRecord{}, entity.ErrInternalServer)
+		exec.usecase.EXPECT().FindByEmail(ctx.Request().Context(), user.Email, uint64(100)).Return([]*entity.MedicalRecord{}, entity.ErrInternalServer)
 		exec.handler.FindByEmail(ctx)
 
 		assert.Equal(t, http.StatusInternalServerError, rec.Code)
@@ -193,7 +210,7 @@ func TestMedicalRecordFinder_FindByEmail(t *testing.T) {
 	})
 
 	t.Run("successfully get medical records from certain user (email)", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodGet, "/medical-records", nil)
+		req := httptest.NewRequest(http.MethodGet, "/medical-records?from=100", nil)
 		user := createUserInformation()
 		req = req.WithContext(context.WithValue(context.Background(), middleware.ContextKeyUser, user))
 
@@ -203,7 +220,7 @@ func TestMedicalRecordFinder_FindByEmail(t *testing.T) {
 
 		exec := createMedicalRecordFinderExecutor(ctrl)
 		mrs := createMedicalRecords()
-		exec.usecase.EXPECT().FindByEmail(ctx.Request().Context(), user.Email).Return(mrs, nil)
+		exec.usecase.EXPECT().FindByEmail(ctx.Request().Context(), user.Email, uint64(100)).Return(mrs, nil)
 		exec.handler.FindByEmail(ctx)
 
 		assert.Equal(t, http.StatusOK, rec.Code)
